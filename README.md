@@ -8,4 +8,4 @@ Dhruv Patel
 Anurag Aman
 Deeptidevi Agrawal
 
-Google Doc Link - https://drive.google.com/file/d/1zoLg1WRs9kk8v-cLncoHOFwDPO0uARpc/view?usp=sharing
+Google Doc Link - https://docs.google.com/spreadsheets/d/1zoLg1WRs9kk8v-cLncoHOFwDPO0uARpc/edit#gid=1014266770
