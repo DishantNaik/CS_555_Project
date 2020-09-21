@@ -27,7 +27,7 @@ head={"NAME":"1",
 "TRLR":"0",
 "NOTE":"0"}
 
-fp=open(r'/Users/anuragaman/Desktop/Team4_test_file.ged')
+fp=open('E:\\Stevens Institute of Technology\\3rd Sem\\CS-555\\Project\\CS_555_Project\\Team4_test_file.ged')
 inlines =[]
 Individuals.field_names = ["ID", "Name", "Gender", "Birthday","Age","Alive","Death","Child","Spouse"]
 Families.field_names = ["ID", "Married", "Divorced", 'Husband ID', 'Husband Name', 'Wife ID', 'Wife Name', 'Children']
