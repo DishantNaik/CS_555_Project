@@ -10,7 +10,7 @@ Deeptidevi Agrawal
 
 Google Doc Link - https://docs.google.com/spreadsheets/d/1zoLg1WRs9kk8v-cLncoHOFwDPO0uARpc/edit#gid=1014266770
 
-# How to run Porject 03 Team4_Project_File.py?
+# How to run Project 03 Team4_Project_File.py?
 
 Step 1: Check out project
 
