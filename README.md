@@ -8,7 +8,7 @@ Dhruv Patel
 Anurag Aman
 Deeptidevi Agrawal
 
-Google Doc Link - https://docs.google.com/spreadsheets/d/1zoLg1WRs9kk8v-cLncoHOFwDPO0uARpc/edit#gid=1014266770
+Google Doc Link - https://drive.google.com/drive/folders/1C6ZIQf_MFh3ryhP_6tIDVhyGCL4BmcRO?usp=sharing
 
 # How to run Project 03 Team4_Project_File.py?
 
