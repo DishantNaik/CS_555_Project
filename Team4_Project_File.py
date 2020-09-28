@@ -166,7 +166,7 @@ for i in range(0, len(fam)):
     Families.add_row(col1)
 
 # Printing the prettytable and populating the value
-print("Invidual")
+print("Individual")
 print(Individuals)
 print("Families")
 print(Families)
@@ -217,3 +217,34 @@ def US39():
 
     return finalList
 print(US39())
+
+#************************************************** DHRUV_PATEL **********************************************************************
+
+def US05():
+    errors = []
+    for i in Families:
+        i.border = False
+        i.header = False
+
+        if ((i.get_string(fields = ["Married"]).strip()) != 'NA'):
+            marriage = (datetime.strptime((i.get_string(fields = ["Married"]).strip()), '%d %b %Y'))
+            husid = (i.get_string(fields = ["Husband ID"])).strip()
+            wifeid = (i.get_string(fields = ["Wife ID"])).strip()
+
+            for j in Individuals:
+                j.border = False
+                j.header = False
+                id = (j.get_string(fields = ["ID"]).strip().replace('/',''))
+
+                if (husid == id or wifeid == id):
+                    if((j.get_string(fields = ["Death"]).strip()) != 'NA'):
+                        death = (datetime.strptime((j.get_string(fields = ["Death"]).strip()), '%d %b %Y'))
+                        if(datetime.date(marriage) < datetime.date(death)):
+                            errors.append(id)
+    
+    if(len(errors) != 0):
+        strerror=", ".join(errors)
+        return f'US05 - Error : Individual - {strerror} have marriage before death'
+    else:
+        return "US05 - No errors found "
+print(US05())
