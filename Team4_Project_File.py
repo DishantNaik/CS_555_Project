@@ -5,6 +5,7 @@ Team :- Anurag Aman , Dhruv Patel , Dishant Naik , Deepti Agarwal
 
 from prettytable import PrettyTable
 from datetime import datetime,date,timedelta
+import copy
 Individuals= PrettyTable() 
 Families= PrettyTable()
 
@@ -27,7 +28,7 @@ head={"NAME":"1",
 "TRLR":"0",
 "NOTE":"0"}
 
-fp=open('E:\\Stevens Institute of Technology\\3rd Sem\\CS-555\\Project\\CS_555_Project\\Team4_test_file.ged')
+fp=open('Testing.ged')
 inlines =[]
 Individuals.field_names = ["ID", "Name", "Gender", "Birthday","Age","Alive","Death","Child","Spouse"]
 Families.field_names = ["ID", "Married", "Divorced", 'Husband ID', 'Husband Name', 'Wife ID', 'Wife Name', 'Children']
@@ -169,3 +170,50 @@ print("Invidual")
 print(Individuals)
 print("Families")
 print(Families)
+
+###################################### Dishant Naik #######################################
+####################################### Story 1 ###########################################
+def US39():
+    tmp = set()
+    names = []
+    dates = []
+    
+    yy = date.today()
+    yy = yy.year
+    present = datetime.now()
+    next_day = present + timedelta(days=30)
+
+    for i in Individuals:
+        i.border,i.header = False,False
+        if(i.get_string(fields=['Alive']).strip() == 'True' and i.get_string(fields=['Spouse']).strip() != 'NA'):
+            names.append(i.get_string(fields=['Name']).strip())
+
+    for i in names:
+        for j in Families:
+            j.header,j.border = False,False
+            if(i == j.get_string(fields=['Husband Name']).strip() or i == j.get_string(fields=['Wife Name']).strip() ):
+                marDate = datetime.strptime((j.get_string(fields=['Married']).strip()), '%d %b %Y')
+                marDate = marDate.replace(year=yy)
+                dates.append(marDate)
+                break
+    
+    tempDate = copy.deepcopy(dates)
+
+    res = {}
+    for key in names:
+        for value in tempDate:
+            res[key] = value
+            tempDate.remove(value)
+            break
+    
+    for i in dates:
+        if present <= i <= next_day:
+            tmp.add(i)
+
+    finalList = []
+    for key, value in res.items():
+        if value in tmp:
+            finalList.append(key)
+
+    return finalList
+print(US39())
