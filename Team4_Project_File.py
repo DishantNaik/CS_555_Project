@@ -249,8 +249,3 @@ def US05():
         return "US05 - No errors found "
 print(US05())
 
-
-
-def US099():
-    print('US999')
-    
