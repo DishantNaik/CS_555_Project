@@ -2,7 +2,6 @@
 Git repo:- https://github.com/DishantNaik/CS_555_Project
 Team :- Anurag Aman , Dhruv Patel , Dishant Naik , Deepti Agarwal
 """
-
 from prettytable import PrettyTable
 from datetime import datetime,date,timedelta
 import copy
@@ -248,4 +247,3 @@ def US05():
     else:
         return "US05 - No errors found "
 print(US05())
-
