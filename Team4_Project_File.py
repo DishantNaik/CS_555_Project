@@ -75,6 +75,7 @@ for f in fp:
 #************************************************** PROJECT 03 **********************************************************************
 details = []
 vdetails = []
+
 # Extracting the individual information
 for x in inlines:
     if ('Y' in x.split("|")):
@@ -89,7 +90,7 @@ for x in range(1 , len(vdetails)):
     col=['NA','NA','NA','NA','NA',True,'NA','NA','NA']
     data = vdetails[x].split("\n")
     a =set()
-    b= set()
+    b = set()
     #Populating the row with the details 
     for j in range (0 , len(data)):
         #Getting the id and putting it into the column:- 1
@@ -127,7 +128,7 @@ for x in range(1 , len(vdetails)):
 #Retriving the family details
 col1 = ['NA','NA','NA','NA','NA','NA','NA','NA']
 fam=vdetails[-1].split("0|FAM")[1:]
-# print(fam)
+
 for i in range(0, len(fam)):
     member = fam[i].split("\n") 
     c = set()
@@ -159,7 +160,7 @@ for i in range(0, len(fam)):
             col1[7] = c
         #Getting all the divorce information
         elif 'DIV' in mb: 
-            col1[2] = member[j+1].split('|')[-1]
+            col1[2] = member[j+1].split('|')[-1] 
         #Getting all the marriage infirmation.
         elif 'MARR' in mb: 
             col1[1] = member[j+1].split('|')[-1]
@@ -172,7 +173,7 @@ print("Families")
 print(Families)
 
 ###################################### Dishant Naik #######################################
-####################################### Story 1 ###########################################
+####################################### Story 39 ###########################################
 def US39():
     tmp = set()
     names = []
@@ -216,9 +217,9 @@ def US39():
             finalList.append(key)
 
     return finalList
-print(US39())
+print('US39 - ', US39())
 
-####################################### Story 2 ###########################################
+####################################### Story 10 ###########################################
 
 def US10():
     valid_age = []
@@ -226,7 +227,7 @@ def US10():
     for i in Families:
         i.border = False
         i.header = False
-        tmp_marry = datetime.strptime((i.get_string(fields = ["Married"]).strip()), '%d %b %Y')
+        tmp_marry = datetime.strptime((i.get_string(fields = ["Married"]).strip()), '%d %b %Y') 
         hus_id = (i.get_string(fields = ["Husband ID"])).strip()
         wife_id = (i.get_string(fields = ["Wife ID"])).strip()
 
@@ -248,7 +249,7 @@ def US10():
                 else: invalid_age.append(j.get_string(fields = ["Name"]).strip())
 
     return valid_age
-print(US10())
+print('US10 - ',US10())
 
 
 #************************************************** DHRUV_PATEL **********************************************************************
@@ -280,4 +281,27 @@ def US05():
         return f'US05 - Error : Individual - {strerror} have marriage before death'
     else:
         return "US05 - No errors found "
-print(US05())
+print('US05 - ',US05())
+
+def US04():
+    errors = ()
+    for i in Families:
+        i.border = False
+        i.header = False
+
+        if ((i.get_string(fields = ["Divorced"]).strip()) != 'NA'):
+            marry = (datetime.strptime((i.get_string(fields = ["Married"]).strip()), '%d %b %Y'))
+            div = (datetime.strptime((i.get_string(fields = ["Married"]).strip()), '%d %b %Y'))
+
+            husid = (i.get_string(fields = ["Husband ID"])).strip()
+            wifeid = (i.get_string(fields = ["Wife ID"])).strip()
+
+            if (datetime.date(marry) > datetime.date(div)):
+                errors.add(husid, wifeid)
+    
+    if len(errors) != 0:
+        strerror=", ".join(errors)
+        return f'US05 - Error : {strerror} have marriage before divorce'
+    else:
+        return 'US04 - No Errors'
+print('US04 - ',US04())
