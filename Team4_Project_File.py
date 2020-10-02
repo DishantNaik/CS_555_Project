@@ -27,7 +27,7 @@ head={"NAME":"1",
 "TRLR":"0",
 "NOTE":"0"}
 
-fp=open('Testing.ged')
+fp=open('Team4_Test.ged')
 inlines =[]
 Individuals.field_names = ["ID", "Name", "Gender", "Birthday","Age","Alive","Death","Child","Spouse"]
 Families.field_names = ["ID", "Married", "Divorced", 'Husband ID', 'Husband Name', 'Wife ID', 'Wife Name', 'Children']
@@ -127,6 +127,7 @@ for x in range(1 , len(vdetails)):
 #Retriving the family details
 col1 = ['NA','NA','NA','NA','NA','NA','NA','NA']
 fam=vdetails[-1].split("0|FAM")[1:]
+# print(fam)
 for i in range(0, len(fam)):
     member = fam[i].split("\n") 
     c = set()
@@ -216,6 +217,39 @@ def US39():
 
     return finalList
 print(US39())
+
+####################################### Story 2 ###########################################
+
+def US10():
+    valid_age = []
+    invalid_age = []
+    for i in Families:
+        i.border = False
+        i.header = False
+        tmp_marry = datetime.strptime((i.get_string(fields = ["Married"]).strip()), '%d %b %Y')
+        hus_id = (i.get_string(fields = ["Husband ID"])).strip()
+        wife_id = (i.get_string(fields = ["Wife ID"])).strip()
+
+        for j in Individuals:
+            j.border = False
+            j.header = False
+            if (j.get_string(fields = ["ID"]).strip() == hus_id):
+                br_date = datetime.strptime((j.get_string(fields = ["Birthday"]).strip()), '%d %b %Y')
+                # print('---------------------------------------------------------------------------------')
+                if((tmp_marry.year - br_date.year) >= 14):
+                    valid_age.append(j.get_string(fields = ["Name"]).strip())
+                else: invalid_age.append(j.get_string(fields = ["Name"]).strip())
+
+            if(j.get_string(fields = ["ID"]).strip() == wife_id):
+                br_date = datetime.strptime((j.get_string(fields = ["Birthday"]).strip()), '%d %b %Y')
+                # print('---------------------------------------------------------------------------------')
+                if((tmp_marry.year - br_date.year) >= 14):
+                    valid_age.append(j.get_string(fields = ["Name"]).strip())
+                else: invalid_age.append(j.get_string(fields = ["Name"]).strip())
+
+    return valid_age
+print(US10())
+
 
 #************************************************** DHRUV_PATEL **********************************************************************
 
