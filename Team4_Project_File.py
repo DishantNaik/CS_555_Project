@@ -27,7 +27,7 @@ head={"NAME":"1",
 "TRLR":"0",
 "NOTE":"0"}
 
-fp=open('Team4_Test.ged')
+fp=open('Test_file.ged')
 inlines =[]
 Individuals.field_names = ["ID", "Name", "Gender", "Birthday","Age","Alive","Death","Child","Spouse"]
 Families.field_names = ["ID", "Married", "Divorced", 'Husband ID', 'Husband Name', 'Wife ID', 'Wife Name', 'Children']
@@ -284,24 +284,23 @@ def US05():
 print('US05 - ',US05())
 
 def US04():
-    errors = ()
+    errors = []
     for i in Families:
         i.border = False
         i.header = False
 
-        if ((i.get_string(fields = ["Divorced"]).strip()) != 'NA'):
-            marry = (datetime.strptime((i.get_string(fields = ["Married"]).strip()), '%d %b %Y'))
-            div = (datetime.strptime((i.get_string(fields = ["Married"]).strip()), '%d %b %Y'))
+        id = (i.get_string(fields = ["ID"]).strip().replace('/',''))
+        if((i.get_string(fields = ["Married"]).strip()) != 'NA'):
+            married = (datetime.strptime((i.get_string(fields = ["Married"]).strip()), '%d %b %Y'))
+            if((i.get_string(fields = ["Divorced"]).strip()) != 'NA'):
+                divorce = (datetime.strptime((i.get_string(fields = ["Divorced"]).strip()), '%d %b %Y'))
+                if(datetime.date(married) > datetime.date(divorce)):
+                        errors.append(id)
 
-            husid = (i.get_string(fields = ["Husband ID"])).strip()
-            wifeid = (i.get_string(fields = ["Wife ID"])).strip()
-
-            if (datetime.date(marry) > datetime.date(div)):
-                errors.add(husid, wifeid)
-    
-    if len(errors) != 0:
+    if(len(errors) != 0):
+        errors = sorted(errors)
         strerror=", ".join(errors)
-        return f'US05 - Error : {strerror} have marriage before divorce'
+        return f"US04 - Error : Family - {strerror} have been divorced before marriage"
     else:
-        return 'US04 - No Errors'
+        return " US04 - No errors found "
 print('US04 - ',US04())
