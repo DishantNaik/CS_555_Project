@@ -366,3 +366,65 @@ def US31(Individuals, ageOver): # Homework 05-Paired programming partner with An
 US31(Individuals, 30)
 
 #************************************************** END - DEEPTIDEVI AGRAWAL  **********************************************************************
+#************************************************** START- ANURAG AMAN *****************************************************************************
+
+
+
+#***********************************User story -17 ***********************************************************************
+
+def US17():
+    nf ={}
+    error = []
+    for x in Families:
+        x.border = False
+        x.header = False
+        val = []
+        id=(x.get_string(fields=["ID"]).strip().replace('/',''))
+        val.append(x.get_string(fields=["Husband ID"]).strip().replace('/','').split(" ")[0])
+        val.append(x.get_string(fields=["Wife ID"]).strip().replace('/','').split(" ")[0])
+        val.append(x.get_string(fields=["Children"]).strip().replace('/',''))
+        nf[id]=val
+    for i in nf:
+        childern= nf[i][-1]
+        patterns= r'\w+'
+        if childern != 'N/A':
+            match= re.findall(patterns, childern)
+            nf[i].pop()
+            nf[i].append(match)
+        if (nf[i][0] in nf[i][-1]) or (nf[i][1] in nf[i][-1]):
+            error.append(f"US17 - Error : In Family {i} has parents who are married to their children ")
+    if error:
+        return error
+    else:
+        return "US17 - No Parents are married to their children"
+
+
+
+#***********************User Story-21 Homework 05-Paired programming partner with Deepti Agarwal ***************************************
+
+def US21():
+    nf={}
+    error=[]
+    for x in Families:
+        x.border , x.header  = False , False
+        val=[]
+        id=(x.get_string(fields=["ID"]).strip().replace('/',''))
+        val.append(x.get_string(fields=["Husband ID"]).strip().replace('/','').split(" ")[0])
+        val.append(x.get_string(fields=["Wife ID"]).strip().replace('/','').split(" ")[0])
+        nf[id]=val
+    for i in nf:
+        for y in Individuals:
+            y.border , y.header = False , False
+            if ((y.get_string(fields=["ID"]).strip()) == nf[i][0]) and (y.get_string(fields=["Gender"]).strip()) != 'M' :
+                error.append(f"US21 - Error : In Family {i} have parents of wrong gender")
+            elif ((y.get_string(fields=["ID"]).strip()) == nf[i][1]) and (y.get_string(fields=["Gender"]).strip()) != 'F':
+                error.append(f"US21 - Error : In Family {i} have parents of wrong gender")
+    if error:
+        return sorted(list(set(error)))
+    else:
+        return "US21 - No Errors"
+
+
+
+
+#******************************************************ANURAG AMAN- END***********************************************************************
