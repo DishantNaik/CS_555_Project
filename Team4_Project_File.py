@@ -334,9 +334,35 @@ def findDeceasedIndividuals(Individuals):
 			deceasedIndividuals.add_row(getIndividualRow(ind))
 	return deceasedIndividuals
 
+def findAliveMarried(Individuals):
+	aliveMarriedIndividuals = createIndividualsPrettyTable()
+	for ind in Individuals:
+		ind.border,ind.header = False,False
+		if (ind.get_string(fields=['Alive']).strip() == 'True' and ind.get_string(fields=['Spouse']).strip() != 'NA' and len(ind.get_string(fields=['Spouse']).strip()) > 0):
+			aliveMarriedIndividuals.add_row(getIndividualRow(ind))
+	return aliveMarriedIndividuals
+
+def findLivingSingleOverXAge(Individuals, ageOver):
+	livingSingleOverXAge = createIndividualsPrettyTable()
+	for ind in Individuals:
+		ind.border,ind.header = False,False
+		if (ind.get_string(fields=['Alive']).strip() == 'True' and ind.get_string(fields=['Spouse']).strip() == 'NA' and ind.get_string(fields=['Age']).strip() != 'NA' and int(ind.get_string(fields=['Age']).strip()) > ageOver):
+			livingSingleOverXAge.add_row(getIndividualRow(ind))
+	return livingSingleOverXAge
+
 def US29(Individuals):
 	print('US29 - Deceased Individuals')
 	print(findDeceasedIndividuals(Individuals))
 US29(Individuals)
+
+def US30(Individuals): #Homework05-UserStory Implemented alone
+	print('US30 - Alive Married Individuals')
+	print(findAliveMarried(Individuals))
+US30(Individuals)
+
+def US31(Individuals, ageOver): # Homework 05-Paired programming partner with Anurag Aman
+	print('US31 - Living Single Over 30')
+	print(findLivingSingleOverXAge(Individuals, ageOver))
+US31(Individuals, 30)
 
 #************************************************** END - DEEPTIDEVI AGRAWAL  **********************************************************************
