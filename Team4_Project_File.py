@@ -5,7 +5,7 @@ Team :- Anurag Aman , Dhruv Patel , Dishant Naik , Deepti Agarwal
 from prettytable import PrettyTable
 from datetime import datetime,date,timedelta
 import copy
-Individuals= PrettyTable() 
+Individuals= PrettyTable()
 Families= PrettyTable()
 
 tags={"INDI":"0","FAM":"0"}
@@ -15,7 +15,7 @@ head={"NAME":"1",
 "BIRT":"1",
 "DEAT":"1",
 "FAMC":"1",
-"FAMS":"1", 
+"FAMS":"1",
 "FAM" :"0",
 "MARR":"1",
 "HUSB":"1",
@@ -68,7 +68,7 @@ for f in fp:
                     inlines.append("<--"+ss[0]+"|"+ss[1]+"|N|"+ss[2])
             else:
                 inlines.append("<--"+ss[0]+"|"+ss[1]+"|N|"+ss[2])
-        
+
     else:
         inlines.append("Invalid input")
 
@@ -85,13 +85,13 @@ for i in ndetails.split("INDI"):
     vdetails.append(i)
 
 
-# Retriving the individual details for the table 
+# Retriving the individual details for the table
 for x in range(1 , len(vdetails)):
     col=['NA','NA','NA','NA','NA',True,'NA','NA','NA']
     data = vdetails[x].split("\n")
     a =set()
     b = set()
-    #Populating the row with the details 
+    #Populating the row with the details
     for j in range (0 , len(data)):
         #Getting the id and putting it into the column:- 1
         if data[j].split('|')[0]=='':
@@ -121,7 +121,7 @@ for x in range(1 , len(vdetails)):
         elif len(data[j].split("|")) >1 and data[j].split("|")[1]=='FAMS':
             b.add((data[j].split("|")[-1]).replace('@',''))
             col[8]=b
-       
+
 
     Individuals.add_row(col)
 
@@ -130,15 +130,15 @@ col1 = ['NA','NA','NA','NA','NA','NA','NA','NA']
 fam=vdetails[-1].split("0|FAM")[1:]
 
 for i in range(0, len(fam)):
-    member = fam[i].split("\n") 
+    member = fam[i].split("\n")
     c = set()
-    for j in range(0,len(member)): 
+    for j in range(0,len(member)):
         mb = member[j].split('|')
         #Getting all the ids
-        if '' == mb[0]: 
-            col1[0]  = mb[-1].replace('@','') 
+        if '' == mb[0]:
+            col1[0]  = mb[-1].replace('@','')
         #Getting all husband id and their names
-        elif 'HUSB' in mb: 
+        elif 'HUSB' in mb:
             husid = mb[-1].replace('@','')
             col1[3] = husid
             for x in Individuals:
@@ -146,7 +146,7 @@ for i in range(0, len(fam)):
                 if (x.get_string(fields=["ID"]).strip()) == husid:
                     col1[4]=(x.get_string(fields=["Name"]).strip())
         #Getting all the wife ids and their name
-        elif 'WIFE' in mb: 
+        elif 'WIFE' in mb:
             wifeid = mb[-1].replace('@','')
             col1[5] = wifeid
             for i in Individuals:
@@ -154,15 +154,15 @@ for i in range(0, len(fam)):
                 if (i.get_string(fields=["ID"]).strip()) == wifeid:
                     col1[6]=(i.get_string(fields=["Name"]).strip())
         #Getting all the Children ids and storing it in the set
-        elif 'CHIL' in mb: 
+        elif 'CHIL' in mb:
             chilid = mb[-1].replace('@','')
             c.add(chilid)
             col1[7] = c
         #Getting all the divorce information
-        elif 'DIV' in mb: 
-            col1[2] = member[j+1].split('|')[-1] 
+        elif 'DIV' in mb:
+            col1[2] = member[j+1].split('|')[-1]
         #Getting all the marriage infirmation.
-        elif 'MARR' in mb: 
+        elif 'MARR' in mb:
             col1[1] = member[j+1].split('|')[-1]
     Families.add_row(col1)
 
@@ -178,7 +178,7 @@ def US39():
     tmp = set()
     names = []
     dates = []
-    
+
     yy = date.today()
     yy = yy.year
     present = datetime.now()
@@ -197,7 +197,7 @@ def US39():
                 marDate = marDate.replace(year=yy)
                 dates.append(marDate)
                 break
-    
+
     tempDate = copy.deepcopy(dates)
 
     res = {}
@@ -206,7 +206,7 @@ def US39():
             res[key] = value
             tempDate.remove(value)
             break
-    
+
     for i in dates:
         if present <= i <= next_day:
             tmp.add(i)
@@ -227,7 +227,7 @@ def US10():
     for i in Families:
         i.border = False
         i.header = False
-        tmp_marry = datetime.strptime((i.get_string(fields = ["Married"]).strip()), '%d %b %Y') 
+        tmp_marry = datetime.strptime((i.get_string(fields = ["Married"]).strip()), '%d %b %Y')
         hus_id = (i.get_string(fields = ["Husband ID"])).strip()
         wife_id = (i.get_string(fields = ["Wife ID"])).strip()
 
@@ -275,7 +275,7 @@ def US05():
                         death = (datetime.strptime((j.get_string(fields = ["Death"]).strip()), '%d %b %Y'))
                         if(datetime.date(marriage) < datetime.date(death)):
                             errors.append(id)
-    
+
     if(len(errors) != 0):
         strerror=", ".join(errors)
         return f'US05 - Error : Individual - {strerror} have marriage before death'
@@ -304,3 +304,39 @@ def US04():
     else:
         return " US04 - No errors found "
 print('US04 - ',US04())
+
+#************************************************** START - DEEPTIDEVI AGRAWAL  ********************************************************************
+def getIndividualRow(ind):
+	id = ind.get_string(fields = ["ID"]).strip()
+	name = ind.get_string(fields = ["Name"]).strip()
+	gender = ind.get_string(fields = ["Gender"]).strip()
+	birthdate = ind.get_string(fields = ["Birthday"]).strip()
+	age = ind.get_string(fields = ["Age"]).strip()
+	alive = ind.get_string(fields = ["Alive"]).strip()
+	death = ind.get_string(fields = ["Death"]).strip()
+	child = ind.get_string(fields = ["Child"]).strip()
+	spouse = ind.get_string(fields = ["Spouse"]).strip()
+	return [id,name,gender,birthdate,age,alive,death,child,spouse]
+
+def getIndividualHeader():
+	return ["ID", "Name", "Gender", "Birthday","Age","Alive","Death","Child","Spouse"]
+
+def createIndividualsPrettyTable():
+	individuals = PrettyTable()
+	individuals.field_names = getIndividualHeader()
+	return individuals
+
+def findDeceasedIndividuals(Individuals):
+	deceasedIndividuals = createIndividualsPrettyTable()
+	for ind in Individuals:
+		ind.border,ind.header = False,False
+		if(ind.get_string(fields=['Alive']).strip() == 'False'):
+			deceasedIndividuals.add_row(getIndividualRow(ind))
+	return deceasedIndividuals
+
+def US29(Individuals):
+	print('US29 - Deceased Individuals')
+	print(findDeceasedIndividuals(Individuals))
+US29(Individuals)
+
+#************************************************** END - DEEPTIDEVI AGRAWAL  **********************************************************************
