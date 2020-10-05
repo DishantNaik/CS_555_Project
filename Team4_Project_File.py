@@ -426,5 +426,54 @@ def US21():
 
 
 
+#******************************************************ANURAG AMAN - END***********************************************************************
 
-#******************************************************ANURAG AMAN- END***********************************************************************
+#********************************************Pradeep Kumar************************************************************************************
+
+def getIndividualRow(ind):
+	id = ind.get_string(fields = ["ID"]).strip()
+	name = ind.get_string(fields = ["Name"]).strip()
+	gender = ind.get_string(fields = ["Gender"]).strip()
+	birthdate = ind.get_string(fields = ["Birthday"]).strip()
+	age = ind.get_string(fields = ["Age"]).strip()
+	alive = ind.get_string(fields = ["Alive"]).strip()
+	death = ind.get_string(fields = ["Death"]).strip()
+	child = ind.get_string(fields = ["Child"]).strip()
+	spouse = ind.get_string(fields = ["Spouse"]).strip()
+	return [id,name,gender,birthdate,age,alive,death,child,spouse]
+
+def getIndividualHeader():
+	return ["ID", "Name", "Gender", "Birthday","Age","Alive","Death","Child","Spouse"]
+
+def createIndividualsPrettyTable():
+	individuals = PrettyTable()
+	individuals.field_names = getIndividualHeader()
+	return individuals
+
+def marriedMale(Individuals):
+	marriedMaleAlive = createIndividualsPrettyTable()
+	for ind in Individuals:
+		ind.border,ind.header = False,False
+		if (ind.get_string(fields=['Alive']).strip() == 'True' and ind.get_string(fields=['Spouse']).strip() != 'NA' and ind.get_string(fields=['Gender']).strip() == 'Male' and len(ind.get_string(fields=['Spouse']).strip()) > 0):
+			marriedMaleAlive.add_row(getIndividualRow(ind))
+	return marriedMaleAlive
+
+def marriedFemale(Individuals):
+	marriedFemaleAlive = createIndividualsPrettyTable()
+	for ind in Individuals:
+		ind.border,ind.header = False,False
+		if (ind.get_string(fields=['Alive']).strip() == 'True' and ind.get_string(fields=['Spouse']).strip() != 'NA' and ind.get_string(fields=['Gender']).strip() == 'Female' and len(ind.get_string(fields=['Spouse']).strip()) > 0):
+			marriedFemaleAlive.add_row(getIndividualRow(ind))
+	return marriedFemaleAlive
+
+#Homework05 - UserStory Implemented alone
+def US46(Individuals): 
+	print('US46 - Living Married Male')
+	print(marriedMale(Individuals))
+US46(Individuals)
+
+#Homework05 - -Paired programming with Neil Naidu
+def US46(Individuals):
+	print('US46 - Living Married Female')
+	print(marriedFemale(Individuals))
+US48(Individuals)
