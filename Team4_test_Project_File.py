@@ -86,5 +86,50 @@ class US31_test(unittest.TestCase):
             lsIndiv.border,lsIndiv.header = False,False
             self.assertEqual("Tia /Meyer/", lsIndiv.get_string(fields=['Name']).strip())
 
+class US43_test(unittest.TestCase):
+
+    def test(self):
+
+        """Testing Equal"""
+        self.assertEqual(Team4_Project_File.US43(), "US43 --> Flagged Individual(s): I5 are recorded as being born after their death.")
+
+class US43_testRaises(unittest.TestCase):
+    def test(self):
+        """Testing Raises"""
+        self.assertIsNot(Team4_Project_File.US43(), "US43 --> Flagged Individual(s): I5, I8, I7, I8 has/have birthday after death." )
+        
+class US43_testIsNotNone(unittest.TestCase):
+    def test(self):
+        """Testing IsNotNone"""
+        self.assertIsNotNone(Team4_Project_File.US43())
+
+class US43_testTrue(unittest.TestCase):
+    def test(self):
+        """Testing True"""
+        self.assertTrue(Team4_Project_File.US43())
+
+class US43_testIsNot(unittest.TestCase):
+    def test(self):
+        """Testing IsNot"""
+        self.assertIsNot(Team4_Project_File.US43(), "US43 --> No fraudulent entries found.")
+
+class US13_test(unittest.TestCase):
+
+    def test(self):
+
+        """Testing Equal"""
+        self.assertEqual(Team4_Project_File.US13(), "US13 --> No infant mortalities found.")
+
+class US44_testRaises(unittest.TestCase):
+    def test(self):
+        """Testing Raises"""
+        output = Team4_Project_File.US44()
+        for i in output:
+            i.border,i.header = False,False
+            self.assertIsNot("Tia /Meyer/", i.get_string(fields=['Name']).strip())
+
+
+#all test methods above this line
+
 if __name__=='__main__':
     unittest.main(exit=False, verbosity=2)

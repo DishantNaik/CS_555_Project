@@ -128,7 +128,7 @@ for x in range(1 , len(vdetails)):
 
     Individuals.add_row(col)
 
-#Retriving the family details
+#Retrieving the family details
 col1 = ['NA','NA','NA','NA','NA','NA','NA','NA']
 fam=vdetails[-1].split("0|FAM")[1:]
 
@@ -481,3 +481,72 @@ def US48(Individuals):
 	print('US46 - Living Married Female')
 	print(marriedFemale(Individuals))
 US48(Individuals)
+#####################################################################
+##########CODE FOR USER STORY 43##############
+def US43():
+    cases = []
+    fraud = []
+
+    for i in Individuals:
+
+        i.border, i.header = False, False
+
+        if((i.get_string(fields = ["Death"]).strip()) != "NA"):
+
+            id = (i.get_string(fields = ["ID"]).strip().replace('/', ''))
+            birthday = datetime.strptime((i.get_string(fields = ["Birthday"]).strip()), '%d %b %Y')
+            death = datetime.strptime((i.get_string(fields = ["Death"]).strip()), '%d %b %Y')
+
+            if(datetime.date(birthday) >= datetime.date(death)):
+                fraud.append(id)
+
+    if(len(fraud) != 0):
+        cases = ", ".join(fraud)
+        return 'US43 --> Flagged Individual(s): '+cases+' are recorded as being born after their death.'
+    else:
+        return "US43 --> No fraudulent entries found."
+
+print(US43())
+####### code for User Story 43 ends here #######
+
+
+##########CODE FOR USER STORY 13##############
+def US13():
+    cases = []
+    infantMortality = []
+
+    for i in Individuals:
+
+        i.border, i.header = False, False
+
+        if((i.get_string(fields = ["Death"]).strip()) != "NA"):
+
+            id = (i.get_string(fields = ["ID"]).strip().replace('/', ''))
+            birthday = datetime.strptime((i.get_string(fields = ["Birthday"]).strip()), '%d %b %Y')
+            death = datetime.strptime((i.get_string(fields = ["Death"]).strip()), '%d %b %Y')
+            daysInYear = 365.2425
+            ageAtDeath = datetime.date(death).year - datetime.date(birthday).year
+            if(ageAtDeath < 5 and ageAtDeath > 0):
+                infantMortality.append(id)
+
+    if(len(infantMortality) != 0):
+        cases = ", ".join(infantMortality)
+        return 'US13 --> Individual(s) were flagged as infant mortality(ies):'+ cases
+    else:
+        return "US13 --> No infant mortalities found."
+print(US13())
+####### code for User Story 13 ends here #######
+
+#*********************** USER STORY - 44 Homework 05-Paired programming with partner: Pradeep Kannabiran ***************************************
+##########CODE FOR USER STORY 44##############
+def US44():
+	deceasedUnmarriedAdults = createIndividualsPrettyTable()
+	for i in Individuals:
+		i.border,i.header = False,False
+		if (i.get_string(fields=['Alive']).strip() == 'False' and i.get_string(fields=['Spouse']).strip() == 'NA' and i.get_string(fields=['Age']).strip() != 'NA' and int(i.get_string(fields=['Age']).strip()) >= 18):
+			deceasedUnmarriedAdults.add_row(getIndividualRow(i))
+	return deceasedUnmarriedAdults
+
+print("US44 --> Listing all deceased adults who died unmarried:")
+print(US44())
+####### code for User Story 44 ends here #######
