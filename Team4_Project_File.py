@@ -1,6 +1,6 @@
 """
 Git repo:- https://github.com/DishantNaik/CS_555_Project
-Team :- Anurag Aman , Dhruv Patel , Dishant Naik , Deepti Agarwal
+Team :- Anurag Aman , Dhruv Patel , Dishant Naik , Deepti Agarwal, Neil Naidu, Pradeep Kumar
 """
 from prettytable import PrettyTable
 from datetime import datetime,date,timedelta
