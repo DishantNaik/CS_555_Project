@@ -432,7 +432,7 @@ def US21():
 
 #****************************************************** ANURAG AMAN - END ***********************************************************************
 
-#******************************************** Pradeep Kumar ************************************************************************************
+#*********************************************** Pradeep Kumar ************************************************************************************
 
 def getIndividualRow(ind):
 	id = ind.get_string(fields = ["ID"]).strip()
@@ -458,7 +458,7 @@ def marriedMale(Individuals):
 	marriedMaleAlive = createIndividualsPrettyTable()
 	for ind in Individuals:
 		ind.border,ind.header = False,False
-		if (ind.get_string(fields=['Alive']).strip() == 'True' and ind.get_string(fields=['Spouse']).strip() != 'NA' and ind.get_string(fields=['Gender']).strip() == 'Male' and len(ind.get_string(fields=['Spouse']).strip()) > 0):
+		if (ind.get_string(fields=['Alive']).strip() == 'True' and ind.get_string(fields=['Spouse']).strip() != 'NA' and ind.get_string(fields=['Gender']).strip() == 'M' and len(ind.get_string(fields=['Spouse']).strip()) > 0):
 			marriedMaleAlive.add_row(getIndividualRow(ind))
 	return marriedMaleAlive
 
@@ -466,7 +466,7 @@ def marriedFemale(Individuals):
 	marriedFemaleAlive = createIndividualsPrettyTable()
 	for ind in Individuals:
 		ind.border,ind.header = False,False
-		if (ind.get_string(fields=['Alive']).strip() == 'True' and ind.get_string(fields=['Spouse']).strip() != 'NA' and ind.get_string(fields=['Gender']).strip() == 'Female' and len(ind.get_string(fields=['Spouse']).strip()) > 0):
+		if (ind.get_string(fields=['Alive']).strip() == 'True' and ind.get_string(fields=['Spouse']).strip() != 'NA' and ind.get_string(fields=['Gender']).strip() == 'F' and len(ind.get_string(fields=['Spouse']).strip()) > 0):
 			marriedFemaleAlive.add_row(getIndividualRow(ind))
 	return marriedFemaleAlive
 
