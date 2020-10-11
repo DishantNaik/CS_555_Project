@@ -332,29 +332,63 @@ def createIndividualsPrettyTable():
 	individuals.field_names = getIndividualHeader()
 	return individuals
 
-def findDeceasedIndividuals(Individuals):
-	deceasedIndividuals = createIndividualsPrettyTable()
+def isAlive(ind):  #refactored
+	return ind.get_string(fields=['Alive']).strip() == 'True'
+
+def hasSpouse(ind): #refactored
+	return ind.get_string(fields=['Spouse']).strip() != 'NA' and len(ind.get_string(fields=['Spouse']).strip()) > 0
+
+def isAliveMarried(ind): #refactored
+	return isAlive(ind) and hasSpouse(ind)
+
+def isLivingSingle(ind): #refactored
+	return isAlive(ind) and not hasSpouse(ind)
+
+def isOverAge(ind, age):
+	return ind.get_string(fields=['Age']).strip() != 'NA' and int(ind.get_string(fields=['Age']).strip()) > age
+
+def isLivingSingleOverAge(ind, age):
+	return isLivingSingle(ind) and isOverAge(ind, age)
+
+def disableHeader(ind): #refactored
+	ind.header = False
+	return ind
+
+def disableBorder(ind): #refactored
+	ind.border = False
+	return ind
+
+def disableHeaderBorder(ind): #refactored
+	ind = disableHeader(ind)
+	ind = disableBorder(ind)
+	return ind
+
+def addRowToPreetyTable(prettyTable, ind): #refactored
+	prettyTable.add_row(getIndividualRow(ind))
+
+def filterIndividuals(Individuals, filter, age): #refactored
+	newIndividuals = createIndividualsPrettyTable()
 	for ind in Individuals:
-		ind.border,ind.header = False,False
-		if(ind.get_string(fields=['Alive']).strip() == 'False'):
-			deceasedIndividuals.add_row(getIndividualRow(ind))
-	return deceasedIndividuals
+		ind = disableHeaderBorder(ind)
+		if(filter == 'DECEASED'):
+			if not isAlive(ind):
+				addRowToPreetyTable(newIndividuals, ind)
+		if(filter == 'ALIVE_MARRIED'):
+			if isAliveMarried(ind):
+				addRowToPreetyTable(newIndividuals, ind)
+		if(filter == 'LIVINGSINGLE_OVERXAGE'):
+			if isLivingSingleOverAge(ind, age):
+				addRowToPreetyTable(newIndividuals, ind)
+	return newIndividuals
+
+def findDeceasedIndividuals(Individuals):
+	return filterIndividuals(Individuals, 'DECEASED', None)
 
 def findAliveMarried(Individuals):
-	aliveMarriedIndividuals = createIndividualsPrettyTable()
-	for ind in Individuals:
-		ind.border,ind.header = False,False
-		if (ind.get_string(fields=['Alive']).strip() == 'True' and ind.get_string(fields=['Spouse']).strip() != 'NA' and len(ind.get_string(fields=['Spouse']).strip()) > 0):
-			aliveMarriedIndividuals.add_row(getIndividualRow(ind))
-	return aliveMarriedIndividuals
+	return filterIndividuals(Individuals, 'ALIVE_MARRIED', None)
 
-def findLivingSingleOverXAge(Individuals, ageOver):
-	livingSingleOverXAge = createIndividualsPrettyTable()
-	for ind in Individuals:
-		ind.border,ind.header = False,False
-		if (ind.get_string(fields=['Alive']).strip() == 'True' and ind.get_string(fields=['Spouse']).strip() == 'NA' and ind.get_string(fields=['Age']).strip() != 'NA' and int(ind.get_string(fields=['Age']).strip()) > ageOver):
-			livingSingleOverXAge.add_row(getIndividualRow(ind))
-	return livingSingleOverXAge
+def findLivingSingleOverXAge(Individuals, age):
+	return filterIndividuals(Individuals, 'LIVINGSINGLE_OVERXAGE', age)
 
 def US29(Individuals):
 	print('US29 - Deceased Individuals')
@@ -434,25 +468,6 @@ def US21():
 
 #*********************************************** Pradeep Kumar ************************************************************************************
 
-def getIndividualRow(ind):
-	id = ind.get_string(fields = ["ID"]).strip()
-	name = ind.get_string(fields = ["Name"]).strip()
-	gender = ind.get_string(fields = ["Gender"]).strip()
-	birthdate = ind.get_string(fields = ["Birthday"]).strip()
-	age = ind.get_string(fields = ["Age"]).strip()
-	alive = ind.get_string(fields = ["Alive"]).strip()
-	death = ind.get_string(fields = ["Death"]).strip()
-	child = ind.get_string(fields = ["Child"]).strip()
-	spouse = ind.get_string(fields = ["Spouse"]).strip()
-	return [id,name,gender,birthdate,age,alive,death,child,spouse]
-
-def getIndividualHeader():
-	return ["ID", "Name", "Gender", "Birthday","Age","Alive","Death","Child","Spouse"]
-
-def createIndividualsPrettyTable():
-	individuals = PrettyTable()
-	individuals.field_names = getIndividualHeader()
-	return individuals
 
 def marriedMale(Individuals):
 	marriedMaleAlive = createIndividualsPrettyTable()
@@ -471,7 +486,7 @@ def marriedFemale(Individuals):
 	return marriedFemaleAlive
 
 #Homework05 - UserStory Implemented alone
-def US46(Individuals): 
+def US46(Individuals):
 	print('US46 - Living Married Male')
 	print(marriedMale(Individuals))
 US46(Individuals)
