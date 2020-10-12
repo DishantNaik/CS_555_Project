@@ -19,7 +19,7 @@ class US05_test(unittest.TestCase):
 
     def test_story_us05(self):
         """Testing User Story 05"""
-        self.assertEqual(Team4_Project_File.US05(),'US05 - Error : Individual - I3, I6, I6 have marriage before death')
+        self.assertEqual(Team4_Project_File.US05(),'US05 - Error : Individual - I3, I6 have marriage before death')
 
 class US04_test(unittest.TestCase):
 

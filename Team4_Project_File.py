@@ -258,29 +258,40 @@ print('US10 - ',US10())
 #************************************************** DHRUV_PATEL **********************************************************************
 #************************************************** USER STORY - 05 **********************************************************************
 
+def getMarriage(ind):
+    #refactor
+    marriageDate = (datetime.strptime((ind.get_string(fields = ["Married"]).strip()), '%d %b %Y'))
+    return marriageDate
+
+def getID(ind):
+    #refactor
+    id = (ind.get_string(fields = ["ID"]).strip().replace('/',''))
+    return id
 def US05():
-    errors = []
-    for i in Families:
-        i.border = False
-        i.header = False
+    errors = set()
+    for ix in Families:
+        ix.border = False
+        ix.header = False
 
-        if ((i.get_string(fields = ["Married"]).strip()) != 'NA'):
-            marriage = (datetime.strptime((i.get_string(fields = ["Married"]).strip()), '%d %b %Y'))
-            husid = (i.get_string(fields = ["Husband ID"])).strip()
-            wifeid = (i.get_string(fields = ["Wife ID"])).strip()
+        if ((ix.get_string(fields = ["Married"]).strip()) != 'NA'):
+            marriage = getMarriage(ix) #refactor
+            husid = (ix.get_string(fields = ["Husband ID"])).strip()
+            wifeid = (ix.get_string(fields = ["Wife ID"])).strip()
 
-            for j in Individuals:
-                j.border = False
-                j.header = False
-                id = (j.get_string(fields = ["ID"]).strip().replace('/',''))
+            for jx in Individuals:
+                jx.border = False
+                jx.header = False
+
+                id = getID(jx) #refactor
 
                 if (husid == id or wifeid == id):
-                    if((j.get_string(fields = ["Death"]).strip()) != 'NA'):
-                        death = (datetime.strptime((j.get_string(fields = ["Death"]).strip()), '%d %b %Y'))
+                    if((jx.get_string(fields = ["Death"]).strip()) != 'NA'):
+                        death = (datetime.strptime((jx.get_string(fields = ["Death"]).strip()), '%d %b %Y'))
                         if(datetime.date(marriage) < datetime.date(death)):
-                            errors.append(id)
+                            errors.add(id)
 
     if(len(errors) != 0):
+        errors = sorted(errors)
         strerror=", ".join(errors)
         return f'US05 - Error : Individual - {strerror} have marriage before death'
     else:
@@ -290,18 +301,19 @@ print('US05 - ',US05())
 #************************************************** USER STORY - 04 **********************************************************************
 
 def US04():
-    errors = []
-    for i in Families:
-        i.border = False
-        i.header = False
+    errors = set()
+    for iy in Families:
+        iy.border = False
+        iy.header = False
 
-        id = (i.get_string(fields = ["ID"]).strip().replace('/',''))
-        if((i.get_string(fields = ["Married"]).strip()) != 'NA'):
-            married = (datetime.strptime((i.get_string(fields = ["Married"]).strip()), '%d %b %Y'))
-            if((i.get_string(fields = ["Divorced"]).strip()) != 'NA'):
-                divorce = (datetime.strptime((i.get_string(fields = ["Divorced"]).strip()), '%d %b %Y'))
+        id = getID(iy) #refactor
+
+        if((iy.get_string(fields = ["Married"]).strip()) != 'NA'):
+            married = getMarriage(iy) #refactor
+            if((iy.get_string(fields = ["Divorced"]).strip()) != 'NA'):
+                divorce = (datetime.strptime((iy.get_string(fields = ["Divorced"]).strip()), '%d %b %Y'))
                 if(datetime.date(married) > datetime.date(divorce)):
-                        errors.append(id)
+                        errors.add(id)
 
     if(len(errors) != 0):
         errors = sorted(errors)
