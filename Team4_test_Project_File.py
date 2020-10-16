@@ -13,7 +13,7 @@ class US10_test(unittest.TestCase):
 
     def test_equal(self):
         """Testing Equal"""
-        self.assertEqual(Team4_Project_File.US10(), ['Kim /Kardashian/', 'Kim /Kardashian/', 'Kris /Humphries/', 'Kim /Kardashian/', 'Robert /Kardashian/', 'Kris /Jenner/', 'Travis /Scott/'])
+        self.assertEqual(Team4_Project_File.US10(), ['Kim /Kardashian/', 'Kris /Humphries/', 'Robert /Kardashian/', 'Kris /Jenner/', 'Travis /Scott/'])
 
 class US05_test(unittest.TestCase):
 

@@ -177,6 +177,13 @@ print(Families)
 
 ###################################### Dishant Naik #######################################
 ####################################### Story 39 ###########################################
+
+def isAlive_1(ind):  #refactored
+	return ind.get_string(fields=['Alive']).strip()
+
+def hasSpouse_1(ind): #refactored
+	return ind.get_string(fields=['Spouse']).strip()
+
 def US39():
     tmp = set()
     names = []
@@ -189,7 +196,7 @@ def US39():
 
     for i in Individuals:
         i.border,i.header = False,False
-        if(i.get_string(fields=['Alive']).strip() == 'True' and i.get_string(fields=['Spouse']).strip() != 'NA'):
+        if(isAlive_1(i) == 'True' and hasSpouse_1(i) != 'NA'):
             names.append(i.get_string(fields=['Name']).strip())
 
     for i in names:
@@ -251,7 +258,7 @@ def US10():
                     valid_age.append(j.get_string(fields = ["Name"]).strip())
                 else: invalid_age.append(j.get_string(fields = ["Name"]).strip())
 
-    return valid_age
+    return list(dict.fromkeys(valid_age))
 print('US10 - ',US10())
 
 
