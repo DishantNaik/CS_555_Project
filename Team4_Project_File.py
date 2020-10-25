@@ -330,6 +330,74 @@ def US04():
         return " US04 - No errors found "
 print('US04 - ',US04())
 
+#************************************************** USER STORY - 16 **********************************************************************
+def US16():
+    family={}
+    errors=[]
+    
+    for row in Families:
+        row.border = False
+        row.header = False
+        fam=[]
+        
+        id=getID(row)
+        
+        fam.append(row.get_string(fields=["Husband Name"]).strip().replace('/','').split(" ")[-1].lower())
+        fam.append(row.get_string(fields=["Children"]).strip().replace('/',''))
+        
+        family[id]=fam
+    
+    for i in family:
+        childern= family[i][-1]
+        patterns= r'\w+'
+        
+        if childern != 'NA':
+            match= re.findall(patterns, childern)
+            child=[]
+            
+            if (match[0]!='NA'):
+                for j in range(0,len(match)):
+                    for row in Individuals:
+                        row.border = False
+                        row.header = False
+                        
+                        if ((row.get_string(fields=["ID"]).strip()) == match[j]) and (row.get_string(fields=["Gender"]).strip()) == 'M' :
+                            child.append(row.get_string(fields=["Name"]).strip().replace('/','').split(" ")[-1].lower())
+
+                        
+            family[i].pop()
+            family[i]=family[i]+child
+    
+    for i in family:
+        if(len(family[i])>1):
+            if(len(list(set(family[i])))==len(family[i])):
+                errors.append(f"US16 - Error : Family {i} has male members with different last names")
+    
+    if(len(errors)>0):
+        return sorted(errors)
+    else:
+        return "US16 - No Family has male members with different last names"
+
+
+print('US16 - ', US16())
+
+#************************************************** USER STORY - 27 **********************************************************************
+def US27():
+    error=[]
+    for row in Individuals:
+        row.border = False
+        row.header = False
+        id=getID(row)
+        if(row.get_string(fields=["Age"]).strip()=='NA'):
+            error.append(id)
+    error=sorted(error)
+    if error:
+        str=" ".join(error)
+        return f"US27 - Error : Individual {str} has no ages displayed"
+    else:
+        return "US27 - No errors found"
+
+print('US27 - ', US27())
 #************************************************** START - DEEPTIDEVI AGRAWAL  ********************************************************************
 def getIndividualRow(ind):
 	id = ind.get_string(fields = ["ID"]).strip()
