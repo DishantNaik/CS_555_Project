@@ -2,6 +2,11 @@ import unittest
 import Team4_Project_File
 from prettytable import PrettyTable
 
+class US22_test(unittest.TestCase):
+
+    def test_equal(self):
+        """Testing Equal"""
+        self.assertEqual(Team4_Project_File.US22(), 'ERROR: All IDs are not unique')
 
 class US39_test(unittest.TestCase):
 

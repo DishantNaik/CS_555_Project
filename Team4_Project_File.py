@@ -4,6 +4,7 @@ Team :- Anurag Aman , Dhruv Patel , Dishant Naik , Deepti Agarwal, Neil Naidu, P
 """
 from prettytable import PrettyTable
 from datetime import datetime,date,timedelta
+import collections
 import copy
 import re
 
@@ -261,6 +262,30 @@ def US10():
     return list(dict.fromkeys(valid_age))
 print('US10 - ',US10())
 
+
+####################################### Story 22 ###########################################
+# All individual IDs should be unique and all family IDs should be unique
+def US22():
+    ind_ids = []
+    fam_ids = []
+    
+    for i in Individuals:
+        i.border = False
+        i.header = False
+        ind_ids.append(i.get_string(fields = ["ID"]).strip())
+
+    for i in Families:
+        i.border = False
+        i.header = False
+        fam_ids.append(i.get_string(fields = ["ID"]).strip())
+
+    if(len(ind_ids) == len(set(ind_ids)) and len(fam_ids) == len(set(fam_ids))):
+        return('NO ERROR found')
+    else: return('ERROR: All IDs are not unique')
+    
+    
+
+print('US22 - ',US22())
 
 #************************************************** DHRUV_PATEL **********************************************************************
 #************************************************** USER STORY - 05 **********************************************************************
@@ -584,3 +609,4 @@ def US44():
 print("US44 --> Listing all deceased adults who died unmarried:")
 print(US44())
 ####### code for User Story 44 ends here #######
+
