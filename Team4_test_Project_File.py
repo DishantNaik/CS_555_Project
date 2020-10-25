@@ -20,6 +20,15 @@ class US10_test(unittest.TestCase):
         """Testing Equal"""
         self.assertEqual(Team4_Project_File.US10(), ['Kim /Kardashian/', 'Kris /Humphries/', 'Robert /Kardashian/', 'Kris /Jenner/', 'Travis /Scott/'])
 
+class US27_test(unittest.TestCase):
+
+    def test_27(self):
+        self.assertEqual(Team4_Project_File.US27(), 'US27 - Error : Individual I24 has no ages displayed')
+
+class US16_test(unittest.TestCase):
+
+    def test_16(self):
+        self.assertEqual(Team4_Project_File.US16(), ['US16 - Error : Family F2 has male members with different last names', 'US16 - Error : Family F3 has male members with different last names', 'US16 - Error : Family F6 has male members with different last names'])
 class US05_test(unittest.TestCase):
 
     def test_story_us05(self):
