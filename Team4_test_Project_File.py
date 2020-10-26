@@ -394,6 +394,30 @@ class US44_testRaises(unittest.TestCase):
             self.assertIsNot("Tia /Meyer/", i.get_string(fields=['Name']).strip())
 
 
+class Test_File(unittest.TestCase):
+    def test_US17(self):
+        self.assertEqual(Team4_Project_File.US17(),['US17 - Error : In Family F6 has parents who are married to their children '])
+        self.assertTrue(Team4_Project_File.US17(),['US17 - Error : In Family F6 has parents who are married to their children '])
+        self.assertNotEqual(Team4_Project_File.US17(),[])
+        self.assertNotEqual(Team4_Project_File.US17(),['US17 - Error : In Family F6 has parents who are married' ])
+        self.assertNotEqual(Team4_Project_File.US17(),['US17'])
+        
+
+
+    def test_US21(self):
+        self.assertEqual(Team4_Project_File.US21(),['US21 - Error : In Family F3 have parents of wrong gender', 'US21 - Error : In Family F6 have parents of wrong gender'])
+        self.assertTrue(Team4_Project_File.US21(),['US21 - Error : In Family F3 have parents of wrong gender', 'US21 - Error : In Family F6 have parents of wrong gender'])
+        self.assertNotEqual(Team4_Project_File.US21(),[])
+        self.assertNotEqual(Team4_Project_File.US21(),['US17 - Error : In Family F6 has parents who are married'])
+        self.assertNotEqual(Team4_Project_File.US21(),['US17 - Error : In Family F6 '])
+
+    def test_US01(self):
+        self.assertEqual(Team4_Project_File.US01(),['US01 - Error : Individual - I14 Birthday 3 MAR 2021 occurs in the future'])
+
+    def test_US02(self):
+        self.assertEqual(Team4_Project_File.US02(),['US02 - Error : individual I2 birthdate 2020-02-29 00:00:00 occurs after marriage 2014-07-15 00:00:00', 'US02 - Error : individual I6 birthdate-1955-11-05 00:00:00 occurs after marriage 1954-05-05 00:00:00', 'US02 - Error : individual I14 birthdate-2021-03-03 00:00:00 occurs after marriage 2015-04-19 00:00:00'])
+
+
 #all test methods above this line
 
 if __name__=='__main__':
