@@ -171,10 +171,16 @@ for i in range(0, len(fam)):
     Families.add_row(col1)
 
 # Printing the prettytable and populating the value
-print("Individual")
-print(Individuals)
-print("Families")
-print(Families)
+# print("Individual")
+# print(Individuals)
+# print("Families")
+# print(Families)
+
+# COMMON METHODS
+def getID(ind):
+    #refactor
+    id = (ind.get_string(fields = ["ID"]).strip().replace('/',''))
+    return id
 
 ###################################### Dishant Naik #######################################
 ####################################### Story 39 ###########################################
@@ -262,6 +268,35 @@ def US10():
     return list(dict.fromkeys(valid_age))
 print('US10 - ',US10())
 
+####################################### Story 32 ###########################################
+
+def US32():
+    multipleBirths = []
+    totalBirths = []
+    for row in Individuals:
+        row.border = False
+        row.header = False
+        if((row.get_string(fields=["Birthday"]).strip()=='NA')==False):
+            birthstr = row.get_string(fields=["Birthday"]).strip()
+            totalBirths.append(birthstr)
+    all_freq = {} 
+    for i in totalBirths: 
+        if i in all_freq: 
+            all_freq[i] += 1
+        else: 
+            all_freq[i] = 1
+    for i in all_freq:
+        if(all_freq[i]>=2):
+            multipleBirths.append(f"US32 - Multiple Births - {i} is a multiple birthdate.")
+    
+    if multipleBirths:
+        return multipleBirths
+    else:
+        return(['US32 - There are no Multiple Births']) 
+    
+
+print('US32 - ',US32())
+
 
 ####################################### Story 22 ###########################################
 # All individual IDs should be unique and all family IDs should be unique
@@ -295,10 +330,7 @@ def getMarriage(ind):
     marriageDate = (datetime.strptime((ind.get_string(fields = ["Married"]).strip()), '%d %b %Y'))
     return marriageDate
 
-def getID(ind):
-    #refactor
-    id = (ind.get_string(fields = ["ID"]).strip().replace('/',''))
-    return id
+
 def US05():
     errors = set()
     for ix in Families:

@@ -2,6 +2,12 @@ import unittest
 import Team4_Project_File
 from prettytable import PrettyTable
 
+class US32_test(unittest.TestCase):
+
+    def test_equal(self):
+        """Testing Equal"""
+        self.assertEqual(Team4_Project_File.US32(), ['US32 - Multiple Births - 21 OCT 1980 is a multiple birthdate.'])
+
 class US22_test(unittest.TestCase):
 
     def test_equal(self):
