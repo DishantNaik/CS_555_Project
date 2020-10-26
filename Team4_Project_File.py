@@ -279,21 +279,21 @@ def US32():
         if((row.get_string(fields=["Birthday"]).strip()=='NA')==False):
             birthstr = row.get_string(fields=["Birthday"]).strip()
             totalBirths.append(birthstr)
-    all_freq = {} 
-    for i in totalBirths: 
-        if i in all_freq: 
+    all_freq = {}
+    for i in totalBirths:
+        if i in all_freq:
             all_freq[i] += 1
-        else: 
+        else:
             all_freq[i] = 1
     for i in all_freq:
         if(all_freq[i]>=2):
             multipleBirths.append(f"US32 - Multiple Births - {i} is a multiple birthdate.")
-    
+
     if multipleBirths:
         return multipleBirths
     else:
-        return(['US32 - There are no Multiple Births']) 
-    
+        return(['US32 - There are no Multiple Births'])
+
 
 print('US32 - ',US32())
 
@@ -303,7 +303,7 @@ print('US32 - ',US32())
 def US22():
     ind_ids = []
     fam_ids = []
-    
+
     for i in Individuals:
         i.border = False
         i.header = False
@@ -317,8 +317,8 @@ def US22():
     if(len(ind_ids) == len(set(ind_ids)) and len(fam_ids) == len(set(fam_ids))):
         return('NO ERROR found')
     else: return('ERROR: All IDs are not unique')
-    
-    
+
+
 
 print('US22 - ',US22())
 
@@ -391,45 +391,45 @@ print('US04 - ',US04())
 def US16():
     family={}
     errors=[]
-    
+
     for row in Families:
         row.border = False
         row.header = False
         fam=[]
-        
+
         id=getID(row)
-        
+
         fam.append(row.get_string(fields=["Husband Name"]).strip().replace('/','').split(" ")[-1].lower())
         fam.append(row.get_string(fields=["Children"]).strip().replace('/',''))
-        
+
         family[id]=fam
-    
+
     for i in family:
         childern= family[i][-1]
         patterns= r'\w+'
-        
+
         if childern != 'NA':
             match= re.findall(patterns, childern)
             child=[]
-            
+
             if (match[0]!='NA'):
                 for j in range(0,len(match)):
                     for row in Individuals:
                         row.border = False
                         row.header = False
-                        
+
                         if ((row.get_string(fields=["ID"]).strip()) == match[j]) and (row.get_string(fields=["Gender"]).strip()) == 'M' :
                             child.append(row.get_string(fields=["Name"]).strip().replace('/','').split(" ")[-1].lower())
 
-                        
+
             family[i].pop()
             family[i]=family[i]+child
-    
+
     for i in family:
         if(len(family[i])>1):
             if(len(list(set(family[i])))==len(family[i])):
                 errors.append(f"US16 - Error : Family {i} has male members with different last names")
-    
+
     if(len(errors)>0):
         return sorted(errors)
     else:
@@ -479,6 +479,9 @@ def createIndividualsPrettyTable():
 def isAlive(ind):  #refactored
 	return ind.get_string(fields=['Alive']).strip() == 'True'
 
+def hasDeathDate(ind):  #refactored
+	return ind.get_string(fields=['Death']).strip() != 'NA'
+
 def hasSpouse(ind): #refactored
 	return ind.get_string(fields=['Spouse']).strip() != 'NA' and len(ind.get_string(fields=['Spouse']).strip()) > 0
 
@@ -493,6 +496,18 @@ def isOverAge(ind, age):
 
 def isLivingSingleOverAge(ind, age):
 	return isLivingSingle(ind) and isOverAge(ind, age)
+
+def hasBirthday(ind):
+	return ind.get_string(fields=['Birthday']).strip() != 'NA'
+
+def getdate(ind, dateType):
+	return (datetime.strptime((ind.get_string(fields = [dateType]).strip()), '%d %b %Y'))
+
+def isRecentBirthWithinDays(ind, days):
+	return isAlive(ind) and hasBirthday(ind) and (datetime.now() - getdate(ind, "Birthday")).days < days and not ((datetime.now() - getdate(ind, "Birthday")).days < 0 )
+
+def isRecentDeathWithinDays(ind, days):
+	return not isAlive(ind) and hasDeathDate(ind) and (datetime.now() - getdate(ind, "Death")).days < days and not ((datetime.now() - getdate(ind, "Death")).days < 0 )
 
 def disableHeader(ind): #refactored
 	ind.header = False
@@ -510,7 +525,7 @@ def disableHeaderBorder(ind): #refactored
 def addRowToPreetyTable(prettyTable, ind): #refactored
 	prettyTable.add_row(getIndividualRow(ind))
 
-def filterIndividuals(Individuals, filter, age): #refactored
+def filterIndividuals(Individuals, filter, n): #refactored
 	newIndividuals = createIndividualsPrettyTable()
 	for ind in Individuals:
 		ind = disableHeaderBorder(ind)
@@ -521,7 +536,13 @@ def filterIndividuals(Individuals, filter, age): #refactored
 			if isAliveMarried(ind):
 				addRowToPreetyTable(newIndividuals, ind)
 		if(filter == 'LIVINGSINGLE_OVERXAGE'):
-			if isLivingSingleOverAge(ind, age):
+			if isLivingSingleOverAge(ind, n):
+				addRowToPreetyTable(newIndividuals, ind)
+		if(filter == 'RECENTBIRTH_WITHINXDAYS'):
+			if isRecentBirthWithinDays(ind, n):
+				addRowToPreetyTable(newIndividuals, ind)
+		if(filter == 'RECENTDEATHS_WITHINXDAYS'):
+			if isRecentDeathWithinDays(ind, n):
 				addRowToPreetyTable(newIndividuals, ind)
 	return newIndividuals
 
@@ -533,6 +554,12 @@ def findAliveMarried(Individuals):
 
 def findLivingSingleOverXAge(Individuals, age):
 	return filterIndividuals(Individuals, 'LIVINGSINGLE_OVERXAGE', age)
+
+def findRecentBirthsWithinLastNDays(Individuals, days):
+	return filterIndividuals(Individuals, 'RECENTBIRTH_WITHINXDAYS', days)
+
+def findRecentDeathsWithinLastNDays(Individuals, days):
+	return filterIndividuals(Individuals, 'RECENTDEATHS_WITHINXDAYS', days)
 
 def US29(Individuals):
 	print('US29 - Deceased Individuals')
@@ -548,6 +575,17 @@ def US31(Individuals, ageOver): # Homework 05-Paired programming partner with An
 	print('US31 - Living Single Over 30')
 	print(findLivingSingleOverXAge(Individuals, ageOver))
 US31(Individuals, 30)
+
+def US35(Individuals, birthsWithinLastNDays):
+	print('US35 - Recent Births Within Last 30 Days')
+	print(findRecentBirthsWithinLastNDays(Individuals, birthsWithinLastNDays))
+US35(Individuals, 30)
+
+def US36(Individuals, deathsWithinLastNDays):
+	print('US36 - Recent Deaths Within Last 30 Days')
+	print(findRecentDeathsWithinLastNDays(Individuals, deathsWithinLastNDays))
+US36(Individuals, 30)
+
 
 #************************************************** END - DEEPTIDEVI AGRAWAL  **********************************************************************
 
@@ -709,4 +747,3 @@ def US44():
 print("US44 --> Listing all deceased adults who died unmarried:")
 print(US44())
 ####### code for User Story 44 ends here #######
-

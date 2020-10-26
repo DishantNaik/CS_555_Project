@@ -1,6 +1,7 @@
 import unittest
 import Team4_Project_File
 from prettytable import PrettyTable
+from datetime import datetime,date,timedelta
 
 class US32_test(unittest.TestCase):
 
@@ -257,7 +258,99 @@ class US31_test(unittest.TestCase):
         for lsIndiv in livingSingleOver30Age:
             lsIndiv.border,lsIndiv.header = False,False
             self.assertIsInstance(lsIndiv,PrettyTable)
-            
+
+class US35_test(unittest.TestCase):
+    def setUp(self):
+        self.individuals = PrettyTable()
+        self.birthDate = datetime.strptime(str((date.today() + timedelta(days=-10))) , '%Y-%m-%d').strftime('%d %b %Y')
+        self.individuals.field_names = ["ID", "Name", "Gender", "Birthday","Age","Alive","Death","Child","Spouse"]
+        self.individuals.add_row(["ind1","Tia /Meyer/",  "F", self.birthDate,"0" ,"True", "NA","NA", "NA" ])
+        self.individuals.add_row(["ind3","Maddy /Meyer/",  "M", "14 Jan 1992","18" ,"True", "NA","NA", "NA" ])
+
+    def test_US35_isRecentBirthWithin30Days(self):
+        self.individuals = PrettyTable()
+        self.individuals.field_names = ["ID", "Name", "Gender", "Birthday","Age","Alive","Death","Child","Spouse"]
+        self.individuals.add_row(["ind1","Tia /Meyer/",  "F", self.birthDate,"0" ,"True", "NA","NA", "NA" ])
+
+        for indiv in self.individuals:
+            indiv.border,indiv.header = False,False
+            self.assertTrue(Team4_Project_File.isRecentBirthWithinDays(indiv, 30))
+
+    def test_US35_isNotRecentBirthWithin30Days(self):
+        self.individuals = PrettyTable()
+        self.individuals.field_names = ["ID", "Name", "Gender", "Birthday","Age","Alive","Death","Child","Spouse"]
+        self.individuals.add_row(["ind3","Maddy /Meyer/",  "M", "14 Jan 2000","20" ,"True", "NA","NA", "{f1}" ])
+
+        for indiv in self.individuals:
+            indiv.border,indiv.header = False,False
+            self.assertFalse(Team4_Project_File.isRecentBirthWithinDays(indiv, 30))
+
+    def test_US35_returnedIndividualsAreNotFromRecentBirthWithin30DaysIndividuals(self):
+        recentBirthsWithinLast30Days = Team4_Project_File.findRecentBirthsWithinLastNDays(self.individuals,30)
+        for rbIndiv in recentBirthsWithinLast30Days:
+            rbIndiv.border,rbIndiv.header = False,False
+            self.assertIsNot("Maddy /Meyer/", rbIndiv.get_string(fields=['Name']).strip())
+
+    def test_US35_returnedIndividualsAreFromRecentBirthWithin30DaysIndividuals(self):
+        recentBirthsWithinLast30Days = Team4_Project_File.findRecentBirthsWithinLastNDays(self.individuals,30)
+        for rbIndiv in recentBirthsWithinLast30Days:
+            rbIndiv.border,rbIndiv.header = False,False
+            self.assertEqual("Tia /Meyer/", rbIndiv.get_string(fields=['Name']).strip())
+
+    def test_US35_returnIndividualsInstanceType(self):
+        recentBirthsWithinLast30Days = Team4_Project_File.findRecentBirthsWithinLastNDays(self.individuals, 30)
+        self.assertIsInstance(recentBirthsWithinLast30Days,PrettyTable)
+        for rbIndiv in recentBirthsWithinLast30Days:
+            rbIndiv.border,rbIndiv.header = False,False
+            self.assertIsInstance(rbIndiv,PrettyTable)
+
+class US36_test(unittest.TestCase):
+    def setUp(self):
+        self.individuals = PrettyTable()
+        self.deathDate = datetime.strptime(str((date.today() + timedelta(days=-10))) , '%Y-%m-%d').strftime('%d %b %Y')
+        self.individuals.field_names = ["ID", "Name", "Gender", "Birthday","Age","Alive","Death","Child","Spouse"]
+        self.individuals.add_row(["ind1","Tia /Meyer/",  "F", "22 Oct 1984","35" ,"False", "22 Mar 2020","NA", "NA" ])
+        self.individuals.add_row(["ind3","Maddy /Meyer/",  "M", "14 Jan 1992","18" ,"False", self.deathDate ,"NA", "NA" ])
+
+    def test_US36_isNotRecentDeathWithin30Days(self):
+        self.individuals = PrettyTable()
+        self.individuals.field_names = ["ID", "Name", "Gender", "Birthday","Age","Alive","Death","Child","Spouse"]
+        self.individuals.add_row(["ind1","Tia /Meyer/",  "F", "22 Oct 1984","35" ,"False", "22 Mar 2020","NA", "NA" ])
+
+        for indiv in self.individuals:
+            indiv.border,indiv.header = False,False
+            self.assertFalse(Team4_Project_File.isRecentDeathWithinDays(indiv, 30))
+
+    def test_US36_isRecentDeathWithin30Days(self):
+        self.individuals = PrettyTable()
+        self.individuals.field_names = ["ID", "Name", "Gender", "Birthday","Age","Alive","Death","Child","Spouse"]
+        self.individuals.add_row(["ind3","Maddy /Meyer/",  "M", "14 Jan 2000","20" ,"False", self.deathDate,"NA", "{f1}" ])
+
+        for indiv in self.individuals:
+            indiv.border,indiv.header = False,False
+            self.assertTrue(Team4_Project_File.isRecentDeathWithinDays(indiv, 30))
+
+    def test_US36_returnedIndividualsAreNotFromRecentDeathWithin30DaysIndividuals(self):
+        recentDeathsWithinLast30Days = Team4_Project_File.findRecentDeathsWithinLastNDays(self.individuals,30)
+        for rdIndiv in recentDeathsWithinLast30Days:
+            rdIndiv.border,rdIndiv.header = False,False
+            self.assertIsNot("Tia /Meyer/", rdIndiv.get_string(fields=['Name']).strip())
+
+    def test_US36_returnedIndividualsAreFromRecentDeathWithin30DaysIndividuals(self):
+        recentDeathsWithinLast30Days = Team4_Project_File.findRecentDeathsWithinLastNDays(self.individuals,30)
+        for rdIndiv in recentDeathsWithinLast30Days:
+            rdIndiv.border,rdIndiv.header = False,False
+            self.assertEqual("Maddy /Meyer/", rdIndiv.get_string(fields=['Name']).strip())
+
+    def test_US36_returnIndividualsInstanceType(self):
+        recentDeathsWithinLast30Days = Team4_Project_File.findRecentDeathsWithinLastNDays(self.individuals, 30)
+        self.assertIsInstance(recentDeathsWithinLast30Days,PrettyTable)
+        for rdIndiv in recentDeathsWithinLast30Days:
+            rdIndiv.border,rdIndiv.header = False,False
+            self.assertIsInstance(rdIndiv,PrettyTable)
+
+
+
 class US43_test(unittest.TestCase):
 
     def test(self):
