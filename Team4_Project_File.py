@@ -171,14 +171,14 @@ for i in range(0, len(fam)):
     Families.add_row(col1)
 
 # Printing the prettytable and populating the value
-# print("Individual")
-# print(Individuals)
-# print("Families")
-# print(Families)
+print("Individual")
+print(Individuals)
+print("Families")
+print(Families)
 
 # COMMON METHODS
 def getID(ind):
-    #refactor
+    #refactor (Dhruv Patel)
     id = (ind.get_string(fields = ["ID"]).strip().replace('/',''))
     return id
 
