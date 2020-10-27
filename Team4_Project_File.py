@@ -733,6 +733,7 @@ def marriedFemale(Individuals):
 			marriedFemaleAlive.add_row(getIndividualRow(ind))
 	return marriedFemaleAlive
 
+
 #Homework05 - UserStory Implemented alone
 def US46(Individuals):
 	print('US46 - Living Married Male')
@@ -741,10 +742,23 @@ US46(Individuals)
 
 #Homework05 - -Paired programming with Neil Naidu
 def US48(Individuals):
-	print('US46 - Living Married Female')
+	print('US48 - Living Married Female')
 	print(marriedFemale(Individuals))
 US48(Individuals)
-#####################################################################
+
+def US47(Individuals):
+    print('US47 - Children with Single parent')
+    childSP = set()
+    for ab in Families:
+        ab.border,ab.header = False,False
+        if (ab.get_string(fields=['Children']).strip() != 'NA' and ab.get_string(fields=['Divorced']).strip() != 'NA'):
+            childSP.add(ab.get_string(fields=['Children']).strip())
+    print(childSP)
+US47(Individuals)
+
+
+
+#*********************************************** Pradeep Kumar END ************************************************************************************
 ##########CODE FOR USER STORY 43##############
 def US43():
     cases = []
