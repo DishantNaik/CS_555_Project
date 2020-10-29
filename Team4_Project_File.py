@@ -748,13 +748,23 @@ US48(Individuals)
 
 def US47(Individuals):
     print('US47 - Children with Single parent')
+    bad_chars = ['{\'', '\'', '{', '}','\'}']
     childSP = set()
     for ab in Families:
         ab.border,ab.header = False,False
         if (ab.get_string(fields=['Children']).strip() != 'NA' and ab.get_string(fields=['Divorced']).strip() != 'NA'):
-            childSP.add(ab.get_string(fields=['Children']).strip())
+            temp = ab.get_string(fields=['Children']).strip()
+            for i in bad_chars :
+                temp = temp.replace(i, '')
+            temp_1 = temp.split(", ")
+            for j in temp_1 :
+                childSP.add(j)  
     print(childSP)
 US47(Individuals)
+
+def US20(Individuals) :
+    print('US20 - Aunts and Uncles')
+
 
 
 
