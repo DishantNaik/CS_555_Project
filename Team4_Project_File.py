@@ -733,6 +733,9 @@ def marriedFemale(Individuals):
 			marriedFemaleAlive.add_row(getIndividualRow(ind))
 	return marriedFemaleAlive
 
+#def auntAndUncle(Individuals):
+#    auntAndUncle = createIndividualsPrettyTable()
+#    for 
 
 #Homework05 - UserStory Implemented alone
 def US46(Individuals):
@@ -762,8 +765,11 @@ def US47(Individuals):
     print(childSP)
 US47(Individuals)
 
-def US20(Individuals) :
-    print('US20 - Aunts and Uncles')
+#def US20(Individuals) :
+#    print('US20 - Aunts and Uncles')
+#    for ab in Families:
+#        ab.border,ab.header = False,False
+#        if (ab.get_string(fields=['Husband ID']).strip() != 'NA' and ab.get_string(fields=['Divorced']).strip() != 'NA'):
 
 
 
