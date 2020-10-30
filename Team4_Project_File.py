@@ -751,6 +751,7 @@ US48(Individuals)
 
 def US47(Individuals):
     print('US47 - Children with Single parent')
+    singleParentChild = createIndividualsPrettyTable()
     bad_chars = ['{\'', '\'', '{', '}','\'}']
     childSP = set()
     for ab in Families:
@@ -762,7 +763,11 @@ def US47(Individuals):
             temp_1 = temp.split(", ")
             for j in temp_1 :
                 childSP.add(j)  
-    print(childSP)
+    for ab in Individuals:
+        ab.border,ab.header = False,False
+        if(ab.get_string(fields=['ID']).strip() in childSP):
+            singleParentChild.add_row(getIndividualRow(ab))
+    print(singleParentChild)
 US47(Individuals)
 
 
@@ -888,7 +893,4 @@ def US44():
 
 print("US44 --> Listing all deceased adults who died unmarried:")
 print(US44())
-
-print(Individuals)
-print(Families)
 ####### code for User Story 44 ends here #######
