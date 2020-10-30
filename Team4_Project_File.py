@@ -733,9 +733,9 @@ def marriedFemale(Individuals):
 			marriedFemaleAlive.add_row(getIndividualRow(ind))
 	return marriedFemaleAlive
 
-#def auntAndUncle(Individuals):
-#    auntAndUncle = createIndividualsPrettyTable()
-#    for 
+
+
+        
 
 #Homework05 - UserStory Implemented alone
 def US46(Individuals):
@@ -765,11 +765,57 @@ def US47(Individuals):
     print(childSP)
 US47(Individuals)
 
-#def US20(Individuals) :
-#    print('US20 - Aunts and Uncles')
-#    for ab in Families:
-#        ab.border,ab.header = False,False
-#        if (ab.get_string(fields=['Husband ID']).strip() != 'NA' and ab.get_string(fields=['Divorced']).strip() != 'NA'):
+
+def checkSiblings(sibID, spouse_ID):
+    for x in Families:
+        x.border,x.header = False,False
+        flag = True
+        sibHusID = x.get_string(fields=['Husband ID']).strip()
+        sibWifeID = x.get_string(fields=['Wife ID']).strip()
+        if(sibHusID == sibID or sibWifeID == sibID):
+            sibChildren = x.get_string(fields=['Children']).strip()
+            if(sibChildren.find(spouse_ID) != -1):
+                flag = False
+                return flag
+    return flag
+
+
+
+def US20(Individuals) :
+    print('US20 - Aunts and Uncles')
+    for ab in Families:
+        flag = True
+        ab.border,ab.header = False,False
+        hus_ID = ab.get_string(fields=['Husband ID']).strip()
+        wife_ID = ab.get_string(fields=['Wife ID']).strip()
+        for h in Families:
+            h.border,h.header = False,False
+            sib = h.get_string(fields=['Children']).strip()
+            if(hus_ID in sib):
+                bad_chars = ['{\'', '\'', '{', '}','\'}']
+                for i in bad_chars :
+                    sib = sib.replace(i, '')
+                    temp = sib.split(", ")
+                for i in temp:
+                    if(i == hus_ID): continue
+                    flag = checkSiblings(i, wife_ID)
+        for h in Families:
+            h.border,h.header = False,False
+            sib = h.get_string(fields=['Children']).strip()
+            if(wife_ID in sib):
+                bad_chars = ['{\'', '\'', '{', '}','\'}']
+                for i in bad_chars :
+                    sib = sib.replace(i, '')
+                    temp = sib.split(", ")
+                for i in temp:
+                    if(i == wife_ID): continue
+                    flag = checkSiblings(i, hus_ID)
+        if(flag == False):
+            print(hus_ID, "and ", wife_ID, " have avunculate marriage")
+            break
+    if(flag == True):
+        print("No one in the family have avunculate marriage")    
+US20(Individuals)
 
 
 
@@ -842,4 +888,7 @@ def US44():
 
 print("US44 --> Listing all deceased adults who died unmarried:")
 print(US44())
+
+print(Individuals)
+print(Families)
 ####### code for User Story 44 ends here #######
