@@ -749,7 +749,7 @@ def US48(Individuals):
 	print(marriedFemale(Individuals))
 US48(Individuals)
 
-def US47(Individuals):
+def US47():
     print('US47 - Children with Single parent')
     singleParentChild = createIndividualsPrettyTable()
     bad_chars = ['{\'', '\'', '{', '}','\'}']
@@ -768,7 +768,7 @@ def US47(Individuals):
         if(ab.get_string(fields=['ID']).strip() in childSP):
             singleParentChild.add_row(getIndividualRow(ab))
     print(singleParentChild)
-US47(Individuals)
+US47()
 
 
 def checkSiblings(sibID, spouse_ID):
@@ -786,7 +786,7 @@ def checkSiblings(sibID, spouse_ID):
 
 
 
-def US20(Individuals) :
+def US20() :
     print('US20 - Aunts and Uncles')
     for ab in Families:
         flag = True
@@ -820,7 +820,7 @@ def US20(Individuals) :
             break
     if(flag == True):
         print("No one in the family have avunculate marriage")    
-US20(Individuals)
+US20()
 
 
 
@@ -868,7 +868,6 @@ def US13():
             id = (i.get_string(fields = ["ID"]).strip().replace('/', ''))
             birthday = datetime.strptime((i.get_string(fields = ["Birthday"]).strip()), '%d %b %Y')
             death = datetime.strptime((i.get_string(fields = ["Death"]).strip()), '%d %b %Y')
-            daysInYear = 365.2425
             ageAtDeath = datetime.date(death).year - datetime.date(birthday).year
             if(ageAtDeath < 5 and ageAtDeath > 0):
                 infantMortality.append(id)
@@ -894,3 +893,84 @@ def US44():
 print("US44 --> Listing all deceased adults who died unmarried:")
 print(US44())
 ####### code for User Story 44 ends here #######
+
+##########CODE FOR USER STORY 18##############
+
+def US18() :
+    count = 0
+    for i in Families:
+        i.border,i.header = False,False
+        husband = i.get_string(fields=['Husband ID']).strip()
+        wife = i.get_string(fields=['Wife ID']).strip()
+
+        for j in Families:
+            j.border, j.header = False,False
+            listOfSiblings = j.get_string(fields=['Children']).strip()
+
+            """ fam1= " ", fam2= " "
+            for k in Individuals:
+                k.border, k.header = False,False
+                if(husband == k.get_string(fields=['ID']).strip()):
+                    fam1 = k.get_string(fields=['Children']).strip()
+                if(husband == k.get_string(fields=['ID']).strip()):
+                    fam2 = k.get_string(fields=['Children']).strip()
+            if(fam1 == fam2): """
+
+            if((husband in listOfSiblings) and (wife in listOfSiblings)):
+                		flaggedMarriage = husband + " and " + wife
+                		print(flaggedMarriage)
+                		count+= 1
+
+    if(count == 0):
+        print("None found")
+    else:
+        print(str(count) + " incestuous marriages found.")
+
+print("US18 --> Listing all couples with incestuous marriages:")
+###### code for User Story 18 ends here ######
+US18()
+
+##########CODE FOR USER STORY 19##############
+def US19():
+    family={}
+    flag = False
+
+    for i in Families:
+        i.border = False
+        i.header = False
+        entry=[]
+        id=getID(i)
+        entry.append(i.get_string(fields=["Husband Name"]).strip().replace('/','').split(" ")[-1].lower())
+        entry.append(i.get_string(fields=["Children"]).strip().replace('/',''))
+        family[id]=entry
+
+    for i in family:
+        childern= family[i][-1]
+        patterns= r'\w+'
+
+        if childern != 'NA':
+            match= re.findall(patterns, childern)
+            child=[]
+            if (match[0]!='NA'):
+                for j in range(0,len(match)):
+                    for k in Individuals:
+                        k.border = False
+                        k.header = False
+
+                        if ((k.get_string(fields=["ID"]).strip()) == match[j]) and (k.get_string(fields=["Gender"]).strip()) == 'F' :
+                            child.append(k.get_string(fields=["Name"]).strip().replace('/','').split(" ")[-1].lower())
+
+            family[i].pop()
+            family[i] = family[i] + child
+
+    for i in family:
+        if(len(family[i]) > 1):
+            if(len(list(set(family[i]))) == len(family[i])):
+                print("Family (ID:"+ i +") has female members with different last names")
+                flag = True
+
+    if(flag == False):
+        print("No different names found")
+print("US19 --> Last name verification of females:")
+###### code for User Story 19 ends here ######
+US19()
