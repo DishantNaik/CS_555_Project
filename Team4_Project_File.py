@@ -913,6 +913,30 @@ def US20() :
         print("No one in the family have avunculate marriage")
 US20()
 
+def US24() : 
+    print('US24 - Unique families by spouses')
+    for ab in Families:
+        flag = True
+        ab.border,ab.header = False,False
+        hus = ab.get_string(fields=['Husband Name']).strip()
+        wife = ab.get_string(fields=['Wife Name']).strip()
+        mar_date = ab.get_string(fields=['Married']).strip()
+        fam_id = ab.get_string(fields=['ID']).strip()
+        for h in Families:
+            h.border,h.header = False,False
+            hus_test = h.get_string(fields=['Husband Name']).strip()
+            wife_test = h.get_string(fields=['Wife Name']).strip()
+            fam_id_test = h.get_string(fields=['ID']).strip()
+            mar_date_test = h.get_string(fields=['Married']).strip()
+            if(fam_id == fam_id_test):
+                continue
+            if(hus_test == hus and wife == wife_test and mar_date == mar_date_test) : 
+                flag = False
+                print("Family : ", fam_id, " and ", fam_id_test, " are having same spouses by name and marriage date ")
+    if(flag):
+        print("All the families in the GEDCOM file are unique")
+US24()
+
 
 
 
@@ -1065,3 +1089,4 @@ def US19():
 print("US19 --> Last name verification of females:")
 ###### code for User Story 19 ends here ######
 US19()
+
