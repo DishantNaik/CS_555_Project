@@ -682,7 +682,7 @@ US33(Individuals, Families, 18)
 
 #************************************************** START- ANURAG AMAN *****************************************************************************
 
-#########################################################USER STORY - 01###############################################################################
+#########################################################USER STORY - 02###############################################################################
 def US02():
     errors=[]
     for row in Families:
@@ -800,6 +800,50 @@ def US21():
         return sorted(list(set(error)))
     else:
         return "US21 - No Errors"
+
+#*************************************** US03 ********************************************************************************************
+def US03():
+    errors=[]
+    for x in Individuals:
+            x.border ,x.header = False , False
+            id=(x.get_string(fields = ["ID"]).strip().replace('/',''))
+            if((x.get_string(fields = ["Birthday"]).strip()) != 'NA'):
+                birthdays = (datetime.strptime((x.get_string(fields = ["Birthday"]).strip()), '%d %b %Y'))
+                if((x.get_string(fields = ["Death"]).strip()) != 'NA'):
+                    death = (datetime.strptime((x.get_string(fields = ["Death"]).strip()), '%d %b %Y'))
+                    if(datetime.date(birthdays)>datetime.date(death) or datetime.date(birthdays) > date.today()):
+                        errors.append(id)
+    if(len(errors) != 0):
+        strerror=" ".join(errors)
+        return f'US03 - Error : Individual - {strerror} have death before birthday'
+    else:
+        return " US03 - No errors found "
+print(US03())
+
+#************************************* US06 ***********************************************************************************************
+def US06():
+    errors=[]
+    for y in Families:
+        y.border ,y.header = False , False
+        if((y.get_string(fields = ["Divorced"]).strip()) != 'NA'):
+            divorce = (datetime.strptime((y.get_string(fields = ["Divorced"]).strip()), '%d %b %Y'))
+            husid = (y.get_string(fields = ["Husband ID"])).strip()
+            wifeid = (y.get_string(fields = ["Wife ID"])).strip()
+            for x in Individuals:
+                x.border , x.header = False , False
+                id = (x.get_string(fields = ["ID"]).strip().replace('/',''))
+                if(husid==id or wifeid==id ):
+                    if((x.get_string(fields = ["Death"]).strip()) != 'NA'):
+                        death = (datetime.strptime((x.get_string(fields = ["Death"]).strip()), '%d %b %Y'))
+                        if(datetime.date(divorce) > datetime.date(death)):
+                            errors.append(id)
+    
+    if(len(errors) != 0):
+        strerror=" ".join(errors)
+        return f'US06 - Error : Individual - {strerror} have death before divorce'
+    else:
+        return "US06 - No errors found "
+print(US06())
 
 
 
