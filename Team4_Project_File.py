@@ -1030,6 +1030,68 @@ def US24() :
         print("All the families in the GEDCOM file are unique")
 US24()
 
+def US26():
+    print('US26 - Corresponding entries')
+    entriesIndividual = createIndividualsPrettyTable()
+    entriesFamilies = createIndividualsPrettyTable()
+    count = True
+    for ind in Individuals:
+        flag = True
+        ind.border,ind.header = False,False
+        ind_ID = ind.get_string(fields=['ID']).strip()
+        ind_child = ind.get_string(fields=['Child']).strip()
+        ind_spouse = ind.get_string(fields=['Spouse']).strip()
+        ind_name = ind.get_string(fields=['Name']).strip()
+        for f in Families:
+            f.border,f.header = False,False
+            fam_ID = f.get_string(fields=['ID']).strip()
+            fam_hus = f.get_string(fields=['Husband Name']).strip()
+            fam_wife = f.get_string(fields=['Wife Name']).strip()
+            fam_child = f.get_string(fields=['Children']).strip()
+            if fam_ID in ind_spouse :
+                if(fam_hus != ind_name and fam_wife != ind_name) :
+                    flag = False
+            if(fam_ID in ind_child) :
+                if ind_ID not in fam_child :
+                    flag = False
+        if(flag == False):
+            entriesIndividual.add_row(getIndividualRow(ind))
+            count = False
+    if(count):
+        print("All family roles specified in an individual record have their corresponding entries in the corresponding family records")
+    else:
+        print("The Individuals without their corresponding entries in family records")
+        print(entriesIndividual)
+    count = True
+    for f in Families:
+        flag = True
+        f.border,f.header = False,False
+        fam_ID = f.get_string(fields=['ID']).strip()
+        fam_child = f.get_string(fields=['Children']).strip()
+        fam_husID = f.get_string(fields=['Husband ID']).strip()
+        fam_wifeID = f.get_string(fields=['Wife Name']).strip()
+        for ind in Individuals:
+            ind.border,ind.header = False,False
+            ind_ID = ind.get_string(fields=['ID']).strip()
+            ind_child = ind.get_string(fields=['Child']).strip()
+            ind_spouse = ind.get_string(fields=['Spouse']).strip()
+            ind_name = ind.get_string(fields=['Name']).strip()
+            if fam_husID == ind_ID :
+                if fam_ID not in ind_spouse :
+                    flag = False
+                    count = False
+                    entriesFamilies.add_row(getIndividualRow(ind))
+            if fam_wifeID == ind_ID : 
+                if fam_ID not in ind_spouse :
+                    flag = False
+                    count = False
+                    entriesFamilies.add_row(getIndividualRow(ind))         
+    if(count):
+        print("All Individual roles specified in Family record have their corresponding entries in the corresponding individual records")
+    else:
+        print("The Individuals without their corresponding entries in Individual records")
+        print(entriesFamilies)
+US26()
 
 
 
@@ -1182,4 +1244,3 @@ def US19():
 print("US19 --> Last name verification of females:")
 ###### code for User Story 19 ends here ######
 US19()
-
