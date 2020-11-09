@@ -171,10 +171,10 @@ for i in range(0, len(fam)):
     Families.add_row(col1)
 
 # Printing the prettytable and populating the value
-# print("Individual")
-# print(Individuals)
-# print("Families")
-# print(Families)
+print("Individual")
+print(Individuals)
+print("Families")
+print(Families)
 
 # COMMON METHODS
 def getID(ind):
@@ -318,10 +318,56 @@ def US22():
         return('NO ERROR found')
     else: return('ERROR: All IDs are not unique')
 
-
-
 print('US22 - ',US22())
 
+####################################### Story 14 ###########################################
+# All individual IDs should be unique and all family IDs should be unique
+# No more than five siblings should be born at the same time
+
+def US14():
+    results = list()
+    for i in Families:
+        i.border = False
+        i.header = False
+        siblings = list()
+
+        tmp = i.get_string(fields = ["Children"]).strip()
+
+        tmp = tmp.split(',')
+    
+        for j in tmp:
+            result = re.sub('[\W_]+', '',j)
+            siblings.append(result)
+
+        birth_dates = list()
+        for k in Individuals:
+            k.border = False
+            k.header = False
+            tmp = k.get_string(fields = ["ID"]).strip()
+            # print(tmp)
+            for l in siblings:
+                if(tmp == l):
+                    if(k.get_string(fields = ["Birthday"]).strip() != 'NA'):
+                        birth_dates.append(datetime.strptime((k.get_string(fields = ["Birthday"]).strip()), '%d %b %Y'))
+                    else: birth_dates.append('NA')
+
+
+        results.append(check(birth_dates))
+
+    if(len(results) > 5):
+        for m in results:
+            if(m == True):
+                return('ERROR')
+            else: return('NO ERROR FOUND')
+
+    else: return('NO ERROR FOUND')
+
+def check(a):
+    return all(i == a[0] for i in a)
+
+
+
+print('US14 - ',US14())
 #************************************************** DHRUV_PATEL **********************************************************************
 #************************************************** USER STORY - 05 **********************************************************************
 
