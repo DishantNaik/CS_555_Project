@@ -933,6 +933,9 @@ def US24() :
             if(hus_test == hus and wife == wife_test and mar_date == mar_date_test) : 
                 flag = False
                 print("Family : ", fam_id, " and ", fam_id_test, " are having same spouses by name and marriage date ")
+                break
+        if(flag == False):
+            break
     if(flag):
         print("All the families in the GEDCOM file are unique")
 US24()
