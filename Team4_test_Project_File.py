@@ -497,6 +497,11 @@ class Test_File(unittest.TestCase):
     def test_US02(self):
         self.assertEqual(Team4_Project_File.US02(),['US02 - Error : individual I2 birthdate 2020-02-29 00:00:00 occurs after marriage 2014-07-15 00:00:00', 'US02 - Error : individual I6 birthdate-1955-11-05 00:00:00 occurs after marriage 1954-05-05 00:00:00', 'US02 - Error : individual I14 birthdate-2021-03-03 00:00:00 occurs after marriage 2015-04-19 00:00:00'])
 
+    def test_US03(self):
+        self.assertEqual(Team4_Project_File.US03(),'US03 - Error : Individual - I5 have death before birthday')
+    
+    def test_US06(self):
+        self.assertEqual(Team4_Project_File.US06(),'US06 - Error : Individual - I3 I5 have death before divorce')
 
 class US18_test(unittest.TestCase):
     def test(self):
@@ -513,6 +518,8 @@ class US20_test(unittest.TestCase):
 class US47(unittest.TestCase):
     def test(self):
         self.assertEqual(Team4_Project_File.US47(), None)
+
+
 
 #all test methods above this line
 
