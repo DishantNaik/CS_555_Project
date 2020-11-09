@@ -456,6 +456,34 @@ def US27():
 
 print('US27 - ', US27())
 #************************************************** START - DEEPTIDEVI AGRAWAL  ********************************************************************
+def disableHeader(ind): #refactored
+	ind.header = False
+	return ind
+
+def disableBorder(ind): #refactored
+	ind.border = False
+	return ind
+
+def disableHeaderBorder(ind): #refactored
+	ind = disableHeader(ind)
+	ind = disableBorder(ind)
+	return ind
+
+def getId(row):  #refactored
+	return row.get_string(fields=['ID']).strip()
+
+indsDict = dict()
+familyDict = dict()
+def populateIndividualDict(Individuals):
+	for ind in Individuals:
+		ind = disableHeaderBorder(ind)
+		indsDict[getId(ind)] = ind
+
+def populateFamiliesDict(Families):
+	for family in Families:
+		fam = disableHeaderBorder(family)
+		familyDict[getId(fam)] = fam
+
 def getIndividualRow(ind):
 	id = ind.get_string(fields = ["ID"]).strip()
 	name = ind.get_string(fields = ["Name"]).strip()
@@ -475,6 +503,22 @@ def createIndividualsPrettyTable():
 	individuals = PrettyTable()
 	individuals.field_names = getIndividualHeader()
 	return individuals
+
+def getHusbandId(fam):  #refactored
+	return fam is not None and fam.get_string(fields = ["Husband ID"]).strip()
+
+def getWifeId(fam):  #refactored
+	return fam is not None and fam.get_string(fields = ["Wife ID"]).strip()
+
+def getAge(ind):  #refactored
+	age = ind.get_string(fields = ["Age"]).strip()
+	if age != 'NA':
+		return int(age)
+	else:
+		return -1
+
+def getFamilyOfChild(ind):  #refactored
+	return ind.get_string(fields = ["Child"]).strip().replace('{','').replace('}','').replace('\'','')
 
 def isAlive(ind):  #refactored
 	return ind.get_string(fields=['Alive']).strip() == 'True'
@@ -506,21 +550,44 @@ def getdate(ind, dateType):
 def isRecentBirthWithinDays(ind, days):
 	return isAlive(ind) and hasBirthday(ind) and (datetime.now() - getdate(ind, "Birthday")).days < days and not ((datetime.now() - getdate(ind, "Birthday")).days < 0 )
 
+def daysLeftForNextBirthday(ind):
+	try:
+		indBirthday = getdate(ind, "Birthday")
+		today = datetime.now()
+		if(today.month == indBirthday.month and today.day >= indBirthday.day or today.month > indBirthday.month):
+			nextBirthdayYear = today.year + 1
+		else:
+			nextBirthdayYear = today.year
+		nextBirthday = datetime.strptime(('%d %d %d' % ( indBirthday.day , indBirthday.month, nextBirthdayYear)), '%d %m %Y')
+		return (nextBirthday - today).days
+	except:
+		return -1
+
+def isUpcomingBirthdayWithinDays(ind, days):
+	daysLeft = daysLeftForNextBirthday(ind)
+	return hasBirthday(ind) and daysLeft <= days and daysLeft >= 0
+
+def isAgeYoungerThanXAge(ind, days):
+	return getAge(ind) >=0 and getAge(ind) < days
+
+def areBothParentsDead(ind):
+	areDead = False
+	father = None
+	mother = None
+	if(getFamilyOfChild(ind) != 'NA'):
+		fam = familyDict.get(getFamilyOfChild(ind))
+		if fam is not None and getHusbandId(fam) != 'NA':
+			father = indsDict[getHusbandId(fam)]
+		if fam is not None and  getWifeId(fam) != 'NA':
+			mother = indsDict[getWifeId(fam)]
+		areDead =  (father is None or (father is not None and not isAlive(father))) and ( mother is None or (mother is not None and not isAlive(mother)))
+	return areDead
+
+def isOrphansYoungerThanAge(ind, days):
+	return isAgeYoungerThanXAge(ind, days) and areBothParentsDead(ind)
+
 def isRecentDeathWithinDays(ind, days):
 	return not isAlive(ind) and hasDeathDate(ind) and (datetime.now() - getdate(ind, "Death")).days < days and not ((datetime.now() - getdate(ind, "Death")).days < 0 )
-
-def disableHeader(ind): #refactored
-	ind.header = False
-	return ind
-
-def disableBorder(ind): #refactored
-	ind.border = False
-	return ind
-
-def disableHeaderBorder(ind): #refactored
-	ind = disableHeader(ind)
-	ind = disableBorder(ind)
-	return ind
 
 def addRowToPreetyTable(prettyTable, ind): #refactored
 	prettyTable.add_row(getIndividualRow(ind))
@@ -544,6 +611,13 @@ def filterIndividuals(Individuals, filter, n): #refactored
 		if(filter == 'RECENTDEATHS_WITHINXDAYS'):
 			if isRecentDeathWithinDays(ind, n):
 				addRowToPreetyTable(newIndividuals, ind)
+		if(filter == 'UPCOMINGBIRTHDAY_WITHINXDAYS'):
+			if isUpcomingBirthdayWithinDays(ind, n):
+				addRowToPreetyTable(newIndividuals, ind)
+		if(filter == 'ORPHANS_YOUNGERTHANXAGE'):
+			if isOrphansYoungerThanAge(ind, n):
+				addRowToPreetyTable(newIndividuals, ind)
+
 	return newIndividuals
 
 def findDeceasedIndividuals(Individuals):
@@ -560,6 +634,12 @@ def findRecentBirthsWithinLastNDays(Individuals, days):
 
 def findRecentDeathsWithinLastNDays(Individuals, days):
 	return filterIndividuals(Individuals, 'RECENTDEATHS_WITHINXDAYS', days)
+
+def findUpcomingBirthdaysInNextNDays(Individuals, days):
+	return filterIndividuals(Individuals, 'UPCOMINGBIRTHDAY_WITHINXDAYS', days)
+
+def findOrphansYoungerThan(Individuals, childAge):
+	return filterIndividuals(Individuals, 'ORPHANS_YOUNGERTHANXAGE', childAge)
 
 def US29(Individuals):
 	print('US29 - Deceased Individuals')
@@ -586,6 +666,17 @@ def US36(Individuals, deathsWithinLastNDays):
 	print(findRecentDeathsWithinLastNDays(Individuals, deathsWithinLastNDays))
 US36(Individuals, 30)
 
+def US38(Individuals, birthdaysInNextNDays):
+	print('US38 - Upcoming birthdays in next 30 Days')
+	print(findUpcomingBirthdaysInNextNDays(Individuals, birthdaysInNextNDays))
+US38(Individuals, 30)
+
+def US33(Individuals, Families, childAge):
+	print('US33 - Orphans(both parents dead and child < 18 years old)')
+	populateIndividualDict(Individuals)
+	populateFamiliesDict(Families)
+	print(findOrphansYoungerThan(Individuals, childAge))
+US33(Individuals, Families, 18)
 
 #************************************************** END - DEEPTIDEVI AGRAWAL  **********************************************************************
 
@@ -648,12 +739,12 @@ def US01():
                 id=(row.get_string(fields=["ID"]).strip().replace('/',''))
                 errors.append(f"US01 - Error : Family ID - {id} Divorced {deathstr} occurs in the future")
 
-     
+
     for i in dates:
         if(datetime.date(i) > date.today()):
             errors.append(i)
 
-    
+
     return errors
 
 #*************************************************** USER STORY - 17 ***********************************************************************
@@ -735,7 +826,7 @@ def marriedFemale(Individuals):
 
 
 
-        
+
 
 #Homework05 - UserStory Implemented alone
 def US46(Individuals):
@@ -762,7 +853,7 @@ def US47():
                 temp = temp.replace(i, '')
             temp_1 = temp.split(", ")
             for j in temp_1 :
-                childSP.add(j)  
+                childSP.add(j)
     for ab in Individuals:
         ab.border,ab.header = False,False
         if(ab.get_string(fields=['ID']).strip() in childSP):
@@ -819,7 +910,7 @@ def US20() :
             print(hus_ID, "and ", wife_ID, " have avunculate marriage")
             break
     if(flag == True):
-        print("No one in the family have avunculate marriage")    
+        print("No one in the family have avunculate marriage")
 US20()
 
 

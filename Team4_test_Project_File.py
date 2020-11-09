@@ -349,6 +349,88 @@ class US36_test(unittest.TestCase):
             rdIndiv.border,rdIndiv.header = False,False
             self.assertIsInstance(rdIndiv,PrettyTable)
 
+class US38_test(unittest.TestCase):
+    def setUp(self):
+        self.individuals = PrettyTable()
+        self.birthDate = datetime.strptime(str((date.today() + timedelta(days=(365*5)+15))) , '%Y-%m-%d').strftime('%d %b %Y')
+        self.individuals.field_names = ["ID", "Name", "Gender", "Birthday","Age","Alive","Death","Child","Spouse"]
+        self.individuals.add_row(["ind1","Tia /Meyer/",  "F", self.birthDate,"35" ,"True", "NA","NA", "NA" ])
+
+    def test_US38_isUpcomingBirthdayIn30Days(self):
+        for indiv in self.individuals:
+            indiv.border,indiv.header = False,False
+            self.assertTrue(Team4_Project_File.isUpcomingBirthdayWithinDays(indiv, 30))
+
+    def test_US38_isNotUpcomingBirthdayIn30Days(self):
+        self.birthDate = datetime.strptime(str((date.today() + timedelta(days=(365*5)+45))) , '%Y-%m-%d').strftime('%d %b %Y')
+        self.individuals = PrettyTable()
+        self.individuals.field_names = ["ID", "Name", "Gender", "Birthday","Age","Alive","Death","Child","Spouse"]
+        self.individuals.add_row(["ind3","Maddy /Meyer/",  "M", self.birthDate,"20" ,"True", "NA","NA", "{f1}" ])
+
+        for indiv in self.individuals:
+            indiv.border,indiv.header = False,False
+            self.assertFalse(Team4_Project_File.isUpcomingBirthdayWithinDays(indiv, 30))
+
+    def test_US38_returnedIndividualsAreUpcomingBirthdayIn30DaysIndividuals(self):
+        upcomingBirthdayIn30Days = Team4_Project_File.findRecentDeathsWithinLastNDays(self.individuals,30)
+        for ubIndiv in upcomingBirthdayIn30Days:
+            ubIndiv.border,ubIndiv.header = False,False
+            self.assertEqual("Tia /Meyer/", ubIndiv.get_string(fields=['Name']).strip())
+
+    def test_US38_returnIndividualsInstanceType(self):
+        upcomingBirthdayIn30Days = Team4_Project_File.findUpcomingBirthdaysInNextNDays(self.individuals, 30)
+        self.assertIsInstance(upcomingBirthdayIn30Days,PrettyTable)
+        for ubIndiv in upcomingBirthdayIn30Days:
+            ubIndiv.border,ubIndiv.header = False,False
+            self.assertIsInstance(ubIndiv,PrettyTable)
+
+class US33_test(unittest.TestCase):
+    def setUp(self):
+        self.individuals = PrettyTable()
+        self.birthDate = datetime.strptime(str((date.today() + timedelta(days=(-365*5)))) , '%Y-%m-%d').strftime('%d %b %Y')
+        self.individuals.field_names = ["ID", "Name", "Gender", "Birthday","Age","Alive","Death","Child","Spouse"]
+        self.individuals.add_row(["ind1","Tia /Meyer/",  "F", self.birthDate,"5" ,"True", "NA","{'fam1'}", "NA" ])
+        self.individuals.add_row(["ind2","Scott /Meyer/",  "M", "14 Jan 1985","35" ,"False", "NA","NA", "NA" ])
+        self.individuals.add_row(["ind3","Natalie /Meyer/",  "F", "14 Jan 1987","35" ,"False", "NA","NA", "NA" ])
+
+        self.families = PrettyTable()
+        self.birthDate = datetime.strptime(str((date.today() + timedelta(days=(-365*5)))) , '%Y-%m-%d').strftime('%d %b %Y')
+        self.families.field_names = ["ID", "Married", "Divorced", 'Husband ID', 'Husband Name', 'Wife ID', 'Wife Name', 'Children']
+        self.families.add_row(["fam1","14 Jan 2010", "NA", "ind2", "Scott /Meyer/","ind3" ,"Natalie /Meyer/", "{'ind1'}" ])
+
+        Team4_Project_File.populateIndividualDict(self.individuals)
+        Team4_Project_File.populateFamiliesDict(self.families)
+
+    def test_US33_isIndividualYoungerThan18(self):
+        for indiv in self.individuals:
+            indiv.border,indiv.header = False,False
+            if(indiv.get_string(fields = ["Name"]).strip() == "Tia /Meyer/"):
+                self.assertTrue(Team4_Project_File.isAgeYoungerThanXAge(indiv, 18))
+
+    def test_US33_areBothParentsDead(self):
+        for indiv in self.individuals:
+            indiv.border,indiv.header = False,False
+            if(indiv.get_string(fields = ["Name"]).strip() == "Tia /Meyer/"):
+                self.assertTrue(Team4_Project_File.areBothParentsDead(indiv))
+
+    def test_US33_isOrphanBelow18(self):
+        for indiv in self.individuals:
+            indiv.border,indiv.header = False,False
+            if(indiv.get_string(fields = ["Name"]).strip() == "Tia /Meyer/"):
+                self.assertTrue(Team4_Project_File.isOrphansYoungerThanAge(indiv, 18))
+
+    def test_US33_returnedIndividualsAreOrphansYoungerThan18YearsIndividuals(self):
+        orphansYoungerThan18 = Team4_Project_File.findOrphansYoungerThan(self.individuals,18)
+        for oIndiv in orphansYoungerThan18:
+            oIndiv.border,oIndiv.header = False,False
+            self.assertEqual("Tia /Meyer/", oIndiv.get_string(fields=['Name']).strip())
+
+    def test_US33_returnIndividualsInstanceType(self):
+        orphansYoungerThan18 = Team4_Project_File.findOrphansYoungerThan(self.individuals, 18)
+        self.assertIsInstance(orphansYoungerThan18,PrettyTable)
+        for oIndiv in orphansYoungerThan18:
+            oIndiv.border,oIndiv.header = False,False
+            self.assertIsInstance(oIndiv,PrettyTable)
 
 
 class US43_test(unittest.TestCase):
@@ -399,7 +481,7 @@ class Test_File(unittest.TestCase):
         self.assertNotEqual(Team4_Project_File.US17(),[])
         self.assertNotEqual(Team4_Project_File.US17(),['US17 - Error : In Family F6 has parents who are married' ])
         self.assertNotEqual(Team4_Project_File.US17(),['US17'])
-        
+
 
 
     def test_US21(self):
