@@ -575,7 +575,7 @@ def US16():
         row.header = False
         fam=[]
 
-        id=getID(row)
+        id = getID(row)
 
         fam.append(row.get_string(fields=["Husband Name"]).strip().replace('/','').split(" ")[-1].lower())
         fam.append(row.get_string(fields=["Children"]).strip().replace('/',''))
@@ -583,12 +583,12 @@ def US16():
         family[id]=fam
 
     for i in family:
-        childern= family[i][-1]
-        patterns= r'\w+'
+        childern = family[i][-1]
+        patterns = r'\w+'
 
         if childern != 'NA':
-            match= re.findall(patterns, childern)
-            child=[]
+            match = re.findall(patterns, childern)
+            child = []
 
             if (match[0]!='NA'):
                 for j in range(0,len(match)):
@@ -601,7 +601,7 @@ def US16():
 
 
             family[i].pop()
-            family[i]=family[i]+child
+            family[i] = family[i]+child
 
     for i in family:
         if(len(family[i])>1):
@@ -622,17 +622,88 @@ def US27():
     for row in Individuals:
         row.border = False
         row.header = False
-        id=getID(row)
-        if(row.get_string(fields=["Age"]).strip()=='NA'):
+        
+        id = getID(row)
+        
+        if(row.get_string(fields=["Age"]).strip() == 'NA'):
             error.append(id)
+    
     error=sorted(error)
     if error:
-        str=" ".join(error)
+        str = " ".join(error)
         return f"US27 - Error : Individual {str} has no ages displayed"
     else:
         return "US27 - No errors found"
 
 print('US27 - ', US27())
+
+#************************************************** USER STORY - 15 **********************************************************************
+def US15():
+    error = set()
+    family = {}
+
+    for row in Families:
+        row.header = False
+        row.border = False
+
+        fam = []
+        id = getID(row)
+        
+        tmp = row.get_string(fields=["Children"]).strip().replace('/','')
+        tmp = tmp.split(',')
+        
+        for i in tmp:
+            res = re.sub('[\W_]+', '',i)
+            fam.append(res)
+        family[id] = fam
+
+        for k,v in family.items():
+            if len(v) > 15:
+                error.add(f"US15 - Family {k} has more than 15 sibiling")
+            
+    if error:
+        return list(error)
+    else:
+        return "No error detected"
+
+print('US15 - ',US15())
+
+#************************************************** USER STORY - 34 **********************************************************************
+def US34():
+    error = []
+    lrg_age = set()
+
+    for row in Families:
+        row.header = False
+        row.border = False
+
+        id = getID(row)
+        husid = (row.get_string(fields = ["Husband ID"])).strip()
+        wifeid = (row.get_string(fields = ["Wife ID"])).strip()
+
+        h_age, w_age = 0, 0
+       
+        for y in Individuals:
+            y.header = False
+            y.border = False
+            if getID(y) == husid:
+                h_age = int(y.get_string(fields = ["Age"]).strip())
+            if getID(y) == wifeid:
+                w_age = int(y.get_string(fields = ["Age"]).strip())
+            
+            older = max(h_age, w_age)
+            young = min(h_age, w_age)
+
+            if young >= (older/2):
+                lrg_age.add(id)
+    
+    error.append(f'US34 - Family {sorted(lrg_age)} has a large age difference')
+    if error:
+        return error
+    else:
+        return 'No couples with large age difference'
+                    
+print('US34 - ',US34())
 #************************************************** START - DEEPTIDEVI AGRAWAL  ********************************************************************
 def disableHeader(ind): #refactored
 	ind.header = False
@@ -1162,6 +1233,68 @@ def US24() :
         print("All the families in the GEDCOM file are unique")
 US24()
 
+def US26():
+    print('US26 - Corresponding entries')
+    entriesIndividual = createIndividualsPrettyTable()
+    entriesFamilies = createIndividualsPrettyTable()
+    count = True
+    for ind in Individuals:
+        flag = True
+        ind.border,ind.header = False,False
+        ind_ID = ind.get_string(fields=['ID']).strip()
+        ind_child = ind.get_string(fields=['Child']).strip()
+        ind_spouse = ind.get_string(fields=['Spouse']).strip()
+        ind_name = ind.get_string(fields=['Name']).strip()
+        for f in Families:
+            f.border,f.header = False,False
+            fam_ID = f.get_string(fields=['ID']).strip()
+            fam_hus = f.get_string(fields=['Husband Name']).strip()
+            fam_wife = f.get_string(fields=['Wife Name']).strip()
+            fam_child = f.get_string(fields=['Children']).strip()
+            if fam_ID in ind_spouse :
+                if(fam_hus != ind_name and fam_wife != ind_name) :
+                    flag = False
+            if(fam_ID in ind_child) :
+                if ind_ID not in fam_child :
+                    flag = False
+        if(flag == False):
+            entriesIndividual.add_row(getIndividualRow(ind))
+            count = False
+    if(count):
+        print("All family roles specified in an individual record have their corresponding entries in the corresponding family records")
+    else:
+        print("The Individuals without their corresponding entries in family records")
+        print(entriesIndividual)
+    count = True
+    for f in Families:
+        flag = True
+        f.border,f.header = False,False
+        fam_ID = f.get_string(fields=['ID']).strip()
+        fam_child = f.get_string(fields=['Children']).strip()
+        fam_husID = f.get_string(fields=['Husband ID']).strip()
+        fam_wifeID = f.get_string(fields=['Wife Name']).strip()
+        for ind in Individuals:
+            ind.border,ind.header = False,False
+            ind_ID = ind.get_string(fields=['ID']).strip()
+            ind_child = ind.get_string(fields=['Child']).strip()
+            ind_spouse = ind.get_string(fields=['Spouse']).strip()
+            ind_name = ind.get_string(fields=['Name']).strip()
+            if fam_husID == ind_ID :
+                if fam_ID not in ind_spouse :
+                    flag = False
+                    count = False
+                    entriesFamilies.add_row(getIndividualRow(ind))
+            if fam_wifeID == ind_ID : 
+                if fam_ID not in ind_spouse :
+                    flag = False
+                    count = False
+                    entriesFamilies.add_row(getIndividualRow(ind))         
+    if(count):
+        print("All Individual roles specified in Family record have their corresponding entries in the corresponding individual records")
+    else:
+        print("The Individuals without their corresponding entries in Individual records")
+        print(entriesFamilies)
+US26()
 
 
 
@@ -1314,4 +1447,3 @@ def US19():
 print("US19 --> Last name verification of females:")
 ###### code for User Story 19 ends here ######
 US19()
-
