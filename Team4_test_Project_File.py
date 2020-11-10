@@ -42,11 +42,22 @@ class US16_test(unittest.TestCase):
 
     def test_16(self):
         self.assertEqual(Team4_Project_File.US16(), ['US16 - Error : Family F2 has male members with different last names', 'US16 - Error : Family F3 has male members with different last names', 'US16 - Error : Family F6 has male members with different last names'])
+
 class US05_test(unittest.TestCase):
 
     def test_story_us05(self):
         """Testing User Story 05"""
         self.assertEqual(Team4_Project_File.US05(),'US05 - Error : Individual - I3, I6 have marriage before death')
+
+class US15_test(unittest.TestCase):
+
+    def test_15(self):
+        self.assertEqual(Team4_Project_File.US15(), ['US15 - Family F4 has more than 15 sibiling'])
+
+class US34_test(unittest.TestCase):
+
+    def test_34(self):
+        self.assertEqual(Team4_Project_File.US34(), ["US34 - Family ['F2', 'F3', 'F4', 'F5', 'F6'] has a large age difference"])    
 
 class US04_test(unittest.TestCase):
 

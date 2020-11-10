@@ -443,7 +443,7 @@ def US16():
         row.header = False
         fam=[]
 
-        id=getID(row)
+        id = getID(row)
 
         fam.append(row.get_string(fields=["Husband Name"]).strip().replace('/','').split(" ")[-1].lower())
         fam.append(row.get_string(fields=["Children"]).strip().replace('/',''))
@@ -451,12 +451,12 @@ def US16():
         family[id]=fam
 
     for i in family:
-        childern= family[i][-1]
-        patterns= r'\w+'
+        childern = family[i][-1]
+        patterns = r'\w+'
 
         if childern != 'NA':
-            match= re.findall(patterns, childern)
-            child=[]
+            match = re.findall(patterns, childern)
+            child = []
 
             if (match[0]!='NA'):
                 for j in range(0,len(match)):
@@ -469,7 +469,7 @@ def US16():
 
 
             family[i].pop()
-            family[i]=family[i]+child
+            family[i] = family[i]+child
 
     for i in family:
         if(len(family[i])>1):
@@ -490,17 +490,88 @@ def US27():
     for row in Individuals:
         row.border = False
         row.header = False
-        id=getID(row)
-        if(row.get_string(fields=["Age"]).strip()=='NA'):
+        
+        id = getID(row)
+        
+        if(row.get_string(fields=["Age"]).strip() == 'NA'):
             error.append(id)
+    
     error=sorted(error)
     if error:
-        str=" ".join(error)
+        str = " ".join(error)
         return f"US27 - Error : Individual {str} has no ages displayed"
     else:
         return "US27 - No errors found"
 
 print('US27 - ', US27())
+
+#************************************************** USER STORY - 15 **********************************************************************
+def US15():
+    error = set()
+    family = {}
+
+    for row in Families:
+        row.header = False
+        row.border = False
+
+        fam = []
+        id = getID(row)
+        
+        tmp = row.get_string(fields=["Children"]).strip().replace('/','')
+        tmp = tmp.split(',')
+        
+        for i in tmp:
+            res = re.sub('[\W_]+', '',i)
+            fam.append(res)
+        family[id] = fam
+
+        for k,v in family.items():
+            if len(v) > 15:
+                error.add(f"US15 - Family {k} has more than 15 sibiling")
+            
+    if error:
+        return list(error)
+    else:
+        return "No error detected"
+
+print('US15 - ',US15())
+
+#************************************************** USER STORY - 34 **********************************************************************
+def US34():
+    error = []
+    lrg_age = set()
+
+    for row in Families:
+        row.header = False
+        row.border = False
+
+        id = getID(row)
+        husid = (row.get_string(fields = ["Husband ID"])).strip()
+        wifeid = (row.get_string(fields = ["Wife ID"])).strip()
+
+        h_age, w_age = 0, 0
+       
+        for y in Individuals:
+            y.header = False
+            y.border = False
+            if getID(y) == husid:
+                h_age = int(y.get_string(fields = ["Age"]).strip())
+            if getID(y) == wifeid:
+                w_age = int(y.get_string(fields = ["Age"]).strip())
+            
+            older = max(h_age, w_age)
+            young = min(h_age, w_age)
+
+            if young >= (older/2):
+                lrg_age.add(id)
+    
+    error.append(f'US34 - Family {sorted(lrg_age)} has a large age difference')
+    if error:
+        return error
+    else:
+        return 'No couples with large age difference'
+                    
+print('US34 - ',US34())
 #************************************************** START - DEEPTIDEVI AGRAWAL  ********************************************************************
 def disableHeader(ind): #refactored
 	ind.header = False
