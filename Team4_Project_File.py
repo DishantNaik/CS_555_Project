@@ -1447,3 +1447,64 @@ def US19():
 print("US19 --> Last name verification of females:")
 ###### code for User Story 19 ends here ######
 US19()
+
+
+        
+# def US11():
+#     count = 0
+#     
+#     for i in Families:
+#         i.border = False
+#         i.header = False
+#         husband = i.get_string(fields=['Husband Name']).strip()
+#         wife = i.get_string(fields=['Wife Name']).strip()
+#         iD = i.get_string(fields=['ID']).strip()
+#         for j in Families:
+#             j.border = False
+#             j.header = False
+#             pCheckH = j.get_string(fields=['Husband Name']).strip()
+#             pCheckW = j.get_string(fields=['Wife Name']).strip()
+#             pCheckId = j.get_string(fields=['ID']).strip()
+#             divorce_status = j.get_string(fields=['Divorced']).strip()
+#             if(pCheckId == iD):
+#                 continue
+#             if(pCheckH == husband and wife == pCheckW):
+#                 if(divorce_status != 'NA') : 
+#                     count+=1
+#                     print(pCheckId,": is a marriage that violates the polygamy law")
+#                     break
+
+#     if(count == 0):
+#         print("None found")
+
+# print("US11 --> Listing all Polygamous marriages:")
+# ###### code for User Story 11 ends here ######
+# US11()
+
+# ##########CODE FOR USER STORY 12##############
+# def US12():
+#     cases = []
+#     flagged = []
+
+#     for i in Individuals:
+
+#         i.border, i.header = False, False
+
+#         if((i.get_string(fields = ["Death"]).strip()) != "NA"):
+
+#             id = (i.get_string(fields = ["ID"]).strip().replace('/', ''))
+#             birthday = datetime.strptime((i.get_string(fields = ["Birthday"]).strip()), '%d %b %Y')
+#             parent = datetime.strptime((i.get_string(fields = ["Death"]).strip()), '%d %b %Y')
+#             ageDiff = datetime.date(parent).year - datetime.date(birthday).year
+#             if(ageDiff < 0 or ageDiff > 80):
+#                 flagged.append(id)
+
+#     if(len(infantMortality) != 0):
+#         cases = ", ".join(flagged)
+#         print('US12 --> Individual(s) were flagged:'+ cases)
+#     else:
+#         print("US12 --> No cases found.")
+
+# ###### code for User Story 12 ends here ######
+# print("US12 --> Age verification of offspring:")
+# US12()
