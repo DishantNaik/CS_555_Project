@@ -519,11 +519,24 @@ class US19_testIsNot(unittest.TestCase):
 
 class US20_test(unittest.TestCase):
     def test(self):
-        self.assertEqual(Team4_Project_File.US20(), None)
+        """Testing User Story 20"""
+        self.assertIsNot(Team4_Project_File.US20(), "No avunculate marriage")
 
 class US47(unittest.TestCase):
     def test(self):
-        self.assertEqual(Team4_Project_File.US47(), None)
+        """Testing User Story 47"""
+        self.assertIsNot(Team4_Project_File.US47(), "No Child with single parent")
+
+class US24(unittest.TestCase):
+    def test(self):
+        """Testing User Story 24"""
+        self.assertIsNot(Team4_Project_File.US24(), "All the families in the GEDCOM file are unique")
+
+class US26(unittest.TestCase):
+    def test(self):
+        """Testing User Story 26"""
+        self.assertIsNot(Team4_Project_File.US26(), 'US26 - Error : Individual - I29 I30 does not have corresponding entries')
+
 
 
 
