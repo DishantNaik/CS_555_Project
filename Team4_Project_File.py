@@ -321,7 +321,6 @@ def US22():
 print('US22 - ',US22())
 
 ####################################### Story 14 ###########################################
-# All individual IDs should be unique and all family IDs should be unique
 # No more than five siblings should be born at the same time
 
 def US14():
@@ -366,8 +365,141 @@ def check(a):
     return all(i == a[0] for i in a)
 
 
-
 print('US14 - ',US14())
+
+####################################### Story 09 ###########################################
+# Birth before death of parents
+def get_childs(fam_id):
+    
+    for j in Families:
+        j.border = False
+        j.header = False
+        if(j.get_string(fields = ["ID"]).strip() == fam_id):
+            siblings = list()
+
+            tmp = j.get_string(fields = ["Children"]).strip()
+            tmp = tmp.split(',')
+
+            for k in tmp:
+                result = re.sub('[\W_]+', '',k)
+                siblings.append(result)
+
+            birth_dates = list()
+            for k in Individuals:
+                k.border = False
+                k.header = False
+                tmp = k.get_string(fields = ["ID"]).strip()
+                # print(tmp)
+                for l in siblings:
+                    if(tmp == l):
+                        if(k.get_string(fields = ["Birthday"]).strip() != 'NA'):
+                            tt = datetime.strptime((k.get_string(fields = ["Birthday"]).strip()), '%d %b %Y')
+                            tt = tt.now().date()
+                            birth_dates.append(tt)
+            
+            return(birth_dates)
+
+
+
+def US09():
+    
+    for i in Families:
+        i.border = False
+        i.header = False
+
+        # Getting parents data
+        parent_id1 = i.get_string(fields = ["Husband ID"]).strip()
+        parent_id2 = i.get_string(fields = ["Wife ID"]).strip()
+        fam_id = i.get_string(fields = ["ID"]).strip()
+
+        hus_deth, wif_deth = '',''
+        for m in Individuals:
+            m.border = False
+            m.header = False
+            
+            if(m.get_string(fields = ["ID"]).strip() == parent_id1):
+                if(m.get_string(fields = ["Death"]).strip() != "NA"):
+                    hus_deth = datetime.strptime((m.get_string(fields = ["Death"]).strip()), '%d %b %Y')
+                    hus_deth = hus_deth.now().date()
+                else: hus_deth = 'NA'
+                # print(type(hus_deth))
+            
+            if(m.get_string(fields = ["ID"]).strip() == parent_id2):
+                if(m.get_string(fields = ["Death"]).strip() != "NA"):
+                    wif_deth = datetime.strptime((m.get_string(fields = ["Death"]).strip()), '%d %b %Y')
+                    wif_deth = wif_deth.now().date()
+                else: wif_deth = 'NA'
+                # print(wif_deth)
+
+            # tmp = get_childs(fam_id)
+            # print(tmp)
+            # print('------------')
+            
+            flag = list()
+
+            if(type(hus_deth) is datetime.date):
+                tmp = get_childs(fam_id)
+
+                for x in tmp:
+                    diff_with_dad = (hus_deth - x).days
+
+                    if(diff_with_dad > 0):
+                        flag.append(True)
+                    else: flag.append(False)
+            
+            if(type(wif_deth) is datetime.date):
+                tmp = get_childs(fam_id)
+
+                for x in tmp:
+                    diff_with_mom = (wif_deth - x).days
+
+                    if(diff_with_mom > 0):
+                        flag.append(True)
+                    else: flag.append(False)
+
+
+            # if(hus_deth != 'NA' and wif_deth != 'NA'):
+            #     tmp = get_childs(fam_id)
+
+            #     for x in tmp:
+ 
+            #         diff_with_dad =  abs((hus_deth - x).days)
+            #         diff_with_mom =  abs((wif_deth - x).days)
+
+            #         if(diff_with_dad > 0 and diff_with_mom > 0):
+            #             flag.append(True)
+            #         else: flag.append(False)
+            
+            # elif(hus_deth != 'NA' and wif_deth == 'NA'):
+            #     tmp = get_childs(fam_id)
+    
+            #     for x in tmp:
+            #         diff_with_dad =  abs((hus_deth - x).days)
+
+            #         if(diff_with_dad > 0):
+            #             flag.append(True)
+            #         else: flag.append(False)
+            
+            # elif(hus_deth == 'NA' and wif_deth != 'NA'):
+            #     tmp = get_childs(fam_id)
+
+            #     for x in tmp:
+                    
+            #         diff_with_mom =  abs((wif_deth - x).days)
+
+            #         if(diff_with_mom > 0):
+            #             flag.append(True)
+            #         else: flag.append(False)
+            
+            # else: flag.append(True)
+
+            for q in flag:
+                if(q == False):
+                    return('Error Found')
+            
+            return('No Error found')
+        
+print('US09 - ',US09())
 #************************************************** DHRUV_PATEL **********************************************************************
 #************************************************** USER STORY - 05 **********************************************************************
 

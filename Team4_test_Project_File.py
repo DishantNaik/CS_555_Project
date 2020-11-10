@@ -3,6 +3,12 @@ import Team4_Project_File
 from prettytable import PrettyTable
 from datetime import datetime,date,timedelta
 
+class US09_test(unittest.TestCase):
+
+    def test_equal(self):
+        """Testing Equal"""
+        self.assertEqual(Team4_Project_File.US09(), 'No Error found')
+
 class US14_test(unittest.TestCase):
 
     def test_equal(self):
