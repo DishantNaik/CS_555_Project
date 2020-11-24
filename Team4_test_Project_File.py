@@ -9,6 +9,10 @@ class US09_test(unittest.TestCase):
         """Testing Equal"""
         self.assertEqual(Team4_Project_File.US09(), 'No Error found')
 
+class US23_test(unittest.TestCase):
+
+    def test_US23(self):
+        self.assertEqual(Team4_Project_File.US23(), ['US23 - Error : Individual I1 and I16 Might be the same'])
 class US14_test(unittest.TestCase):
 
     def test_equal(self):
