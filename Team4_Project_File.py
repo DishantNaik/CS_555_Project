@@ -743,11 +743,25 @@ def US23():
 print('US23 - ',US23())
 
 #************************************************** USER STORY - 40 **********************************************************************
-# def US40():
+def US40():
+    no_children = set()
+    error = []
+    for rw in Individuals:
+        rw.header = False
+        rw.border = False
 
-#     return 0
+        ind_id = getID(rw)
+        if(rw.get_string(fields=["Child"]).strip() == 'NA'):
+            no_children.add(ind_id)
+    
+    error.append(f'US40 - Individual {sorted(no_children)} has no children')
 
-# print('US40 - ',US40())
+    if (len(no_children) != 0):
+        return error
+    else:
+        return 'No Error Found'
+
+print('US40 - ',US40())
 #************************************************** START - DEEPTIDEVI AGRAWAL  ********************************************************************
 def disableHeader(ind): #refactored
 	ind.header = False
