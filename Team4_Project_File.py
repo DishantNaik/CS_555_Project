@@ -1477,6 +1477,51 @@ def US26():
         print(entriesFamilies)
 US26()
 
+def US37():
+    result = set()
+    indi = []
+    yy = date.today()
+    yy = yy.year
+    present = datetime.now()
+    lastMonth = present - timedelta(days=30)
+    for i in Individuals:
+        i.border,i.header = False,False
+        if(i.get_string(fields=['Alive']).strip() != "True"):
+            deathDate = datetime.strptime((i.get_string(fields=['Death']).strip()), '%d %b %Y')
+            if(deathDate > lastMonth ):
+                spouseFam = i.get_string(fields=['Spouse']).strip()
+                indivID = i.get_string(fields=['ID']).strip()
+                for j in spouseFam:
+                    for f in Families:
+                        if(f.get_string(fields=['ID']).strip() == j):
+                            if(f.get_string(fields=['Husband ID']).strip() == indivID):
+                                wifeID = f.get_string(fields=['Wife ID']).strip()
+                                indi.append(wifeID)
+                            else :
+                                husbandID = f.get_string(fields=['Husband ID']).strip()
+                                indi.append(husbandID)
+                            childrn = f.get_string(fields=['Children']).strip()
+                            bad_chars = ['{\'', '\'', '{', '}','\'}']
+                            for b in bad_chars :
+                                childrn = childrn.replace(b, '')
+                                temp = childrn.split(", ")
+                            for t in temp : 
+                                indi.append(t)
+                            break
+    for i in Individuals:
+        i.border,i.header = False,False
+        for j in indi:
+            if(i.get_string(fields=['ID']).strip() == j and i.get_string(fields=['Alive']).strip() == "True"):
+                result.add(j)
+
+    if(result == set()):
+        return "No one in the GEDCOM file died in the last 30days"
+    return result
+
+print("US37 - ", US37())                         
+
+
+  
 
 
 #*********************************************** Pradeep Kumar END ************************************************************************************
