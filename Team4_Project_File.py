@@ -8,7 +8,6 @@ import collections
 import copy
 import re
 
-
 Individuals= PrettyTable()
 Families= PrettyTable()
 
@@ -437,61 +436,61 @@ def US09():
             
             flag = list()
 
-            if(type(hus_deth) is datetime.date):
-                tmp = get_childs(fam_id)
-
-                for x in tmp:
-                    diff_with_dad = (hus_deth - x).days
-
-                    if(diff_with_dad > 0):
-                        flag.append(True)
-                    else: flag.append(False)
-            
-            if(type(wif_deth) is datetime.date):
-                tmp = get_childs(fam_id)
-
-                for x in tmp:
-                    diff_with_mom = (wif_deth - x).days
-
-                    if(diff_with_mom > 0):
-                        flag.append(True)
-                    else: flag.append(False)
-
-
-            # if(hus_deth != 'NA' and wif_deth != 'NA'):
+            # if(type(hus_deth) is datetime.date):
             #     tmp = get_childs(fam_id)
 
             #     for x in tmp:
- 
-            #         diff_with_dad =  abs((hus_deth - x).days)
-            #         diff_with_mom =  abs((wif_deth - x).days)
-
-            #         if(diff_with_dad > 0 and diff_with_mom > 0):
-            #             flag.append(True)
-            #         else: flag.append(False)
-            
-            # elif(hus_deth != 'NA' and wif_deth == 'NA'):
-            #     tmp = get_childs(fam_id)
-    
-            #     for x in tmp:
-            #         diff_with_dad =  abs((hus_deth - x).days)
+            #         diff_with_dad = (hus_deth - x).days
 
             #         if(diff_with_dad > 0):
             #             flag.append(True)
             #         else: flag.append(False)
             
-            # elif(hus_deth == 'NA' and wif_deth != 'NA'):
+            # if(type(wif_deth) is datetime.date):
             #     tmp = get_childs(fam_id)
 
             #     for x in tmp:
-                    
-            #         diff_with_mom =  abs((wif_deth - x).days)
+            #         diff_with_mom = (wif_deth - x).days
 
             #         if(diff_with_mom > 0):
             #             flag.append(True)
             #         else: flag.append(False)
+
+
+            if(type(hus_deth) is datetime.date and type(wif_deth) is datetime.date):
+                tmp = get_childs(fam_id)
+
+                for x in tmp:
+ 
+                    diff_with_dad =  abs((hus_deth - x).days)
+                    diff_with_mom =  abs((wif_deth - x).days)
+
+                    if(diff_with_dad > 0 and diff_with_mom > 0):
+                        flag.append(True)
+                    else: flag.append(False)
             
-            # else: flag.append(True)
+            elif(type(hus_deth) is datetime.date and type(wif_deth) is not datetime.date):
+                tmp = get_childs(fam_id)
+    
+                for x in tmp:
+                    diff_with_dad =  abs((hus_deth - x).days)
+
+                    if(diff_with_dad > 0):
+                        flag.append(True)
+                    else: flag.append(False)
+            
+            elif(type(hus_deth) is not datetime.date and type(wif_deth) is datetime.date):
+                tmp = get_childs(fam_id)
+
+                for x in tmp:
+                    
+                    diff_with_mom =  abs((wif_deth - x).days)
+
+                    if(diff_with_mom > 0):
+                        flag.append(True)
+                    else: flag.append(False)
+            
+            else: flag.append(True)
 
             for q in flag:
                 if(q == False):
@@ -500,6 +499,130 @@ def US09():
             return('No Error found')
         
 print('US09 - ',US09())
+
+####################################### Story 08 ###########################################
+# Birth after marriage of parents
+
+def US08():
+    
+    for i in Families:
+        i.border = False
+        i.header = False
+
+        # Getting parents data
+        # parent_id1 = i.get_string(fields = ["Husband ID"]).strip()
+        # parent_id2 = i.get_string(fields = ["Wife ID"]).strip()
+        parant_mrg = datetime.strptime((i.get_string(fields = ["Married"]).strip()), '%d %b %Y')
+        fam_id = i.get_string(fields = ["ID"]).strip()
+
+        tmp = get_childs(fam_id)
+
+        for j in tmp:
+            for k in Individuals:
+                if(k.get_string(fields = ["ID"]).strip() == j):
+                    tmp1 = datetime.strptime((k.get_string(fields = ["Married"]).strip()), '%d %b %Y')
+
+                    if(abs((parant_mrg - tmp1).days) <= 0):
+                        return('Error found at ', k)
+    
+    return('No error found')
+
+        
+        
+print('US08 - ',US08())
+
+####################################### Story 42 ###########################################
+# Reject illegitimate dates
+def US42():
+    error = list()
+    mon_30 = ['APR','JUN','SEP','NOV']
+    mon_31 = ['JAN','MAR','MAY','JUL','AUG','OCT','DEC']
+    for i in Individuals:
+        i.border = False
+        i.header = False
+        
+        if(i.get_string(fields = ["Birthday"]).strip() != 'NA'):
+            tmp = (datetime.strptime((i.get_string(fields = ["Birthday"]).strip()), '%d %b %Y'))
+            tmp_mon = tmp.month
+            tmp_day = tmp.day
+
+            if (tmp_mon in mon_30):
+                if(tmp_day >= 1 and tmp_day <= 30):
+                    continue
+                else: error.append(tmp)
+            if (tmp_mon in mon_31):
+                if(tmp_day >= 1 and tmp_day <= 31):
+                    continue
+                else: error.append(tmp)
+            if (tmp_mon == 'FEB'):
+                if(tmp_day >= 1 and tmp_day <= 29):
+                    continue
+                else: error.append(tmp)
+
+        
+        if(i.get_string(fields = ["Death"]).strip() != 'NA'):
+            tmp2 = (datetime.strptime((i.get_string(fields = ["Death"]).strip()), '%d %b %Y'))
+            tmp1_mon = tmp2.month
+            tmp1_day = tmp2.day
+
+            if (tmp1_mon in mon_30):
+                if(tmp1_day >= 1 and tmp1_day <= 30):
+                    continue
+                else: error.append(tmp)
+            if (tmp1_mon in mon_31):
+                if(tmp1_day >= 1 and tmp1_day <= 31):
+                    continue
+                else: error.append(tmp)
+            if (tmp1_mon == 'FEB'):
+                if(tmp1_day >= 1 and tmp1_day <= 29):
+                    continue
+                else: error.append(tmp)
+    
+    for j in Families:
+        j.border = False
+        j.header = False
+
+        if(j.get_string(fields = ["Married"]).strip() != 'NA'):
+            tmp = (datetime.strptime((j.get_string(fields = ["Married"]).strip()), '%d %b %Y'))
+            tmp_mon = tmp.month
+            tmp_day = tmp.day
+
+            if (tmp_mon in mon_30):
+                if(tmp_day >= 1 and tmp_day <= 30):
+                    continue
+                else: error.append(tmp)
+            if (tmp_mon in mon_31):
+                if(tmp_day >= 1 and tmp_day <= 31):
+                    continue
+                else: error.append(tmp)
+            if (tmp_mon == 'FEB'):
+                if(tmp_day >= 1 and tmp_day <= 29):
+                    continue
+                else: error.append(tmp)
+
+        if(j.get_string(fields = ["Divorced"]).strip() != 'NA'):
+            tmp = (datetime.strptime((j.get_string(fields = ["Divorced"]).strip()), '%d %b %Y'))
+            tmp1_mon = tmp.month
+            tmp1_day = tmp.day
+
+            if (tmp1_mon in mon_30):
+                if(tmp1_day >= 1 and tmp1_day <= 30):
+                    continue
+                else: error.append(tmp)
+            if (tmp1_mon in mon_31):
+                if(tmp1_day >= 1 and tmp1_day <= 31):
+                    continue
+                else: error.append(tmp)
+            if (tmp1_mon == 'FEB'):
+                if(tmp1_day >= 1 and tmp1_day <= 29):
+                    continue
+                else: error.append(tmp)
+    
+    if(len(error) != 0):
+        return('ERROR -',error)
+    else: return('NO ERROR found')
+            
+print('US42 - ',US42())
 #************************************************** DHRUV_PATEL **********************************************************************
 #************************************************** USER STORY - 05 **********************************************************************
 
