@@ -827,6 +827,64 @@ def US34():
         return 'No couples with large age difference'
                     
 print('US34 - ',US34())
+
+#************************************************** USER STORY - 23 **********************************************************************
+def US23():
+    names=[]
+    dob=[]
+    id=[]
+
+    for row in Individuals:
+        row.border = False
+        row.header = False
+        names.append(row.get_string(fields=["Name"]).strip().replace('/',''))
+        if (row.get_string(fields=["Birthday"]).strip()) != 'NA':
+            dob.append(datetime.strptime((row.get_string(fields=["Birthday"]).strip()), '%d %b %Y'))
+        else:
+            dob.append('N/A')
+        id.append(row.get_string(fields=["ID"]).strip().replace('/',''))
+    error=[]
+    for i in range(0,len(names)):
+        for j in range(i+1, len(names)):
+            if(names[i]==names[j]):
+                if(dob[i]==dob[j]):
+                    error.append(f"US23 - Error : Individual {id[i]} and {id[j]} Might be the same")
+                else:
+                    error.append(f"US23 - Error : Individual {id[i]} and {id[j]} Might be the same")
+                    
+
+            elif(names[i]!=names[j]):
+                if(dob[i]==dob[j]):
+                    error.append(f"US23 - Error : Individual {id[i]} and {id[j]} Might be the same")
+                    
+
+    if len(error)!=0:
+        return (error)
+    else:
+        return ("US23 - No errors found")
+
+print('US23 - ',US23())
+
+#************************************************** USER STORY - 40 **********************************************************************
+def US40():
+    no_children = set()
+    error = []
+    for rw in Individuals:
+        rw.header = False
+        rw.border = False
+
+        ind_id = getID(rw)
+        if(rw.get_string(fields=["Child"]).strip() == 'NA'):
+            no_children.add(ind_id)
+    
+    error.append(f'US40 - Individual {sorted(no_children)} has no children')
+
+    if (len(no_children) != 0):
+        return error
+    else:
+        return 'No Error Found'
+
+print('US40 - ',US40())
 #************************************************** START - DEEPTIDEVI AGRAWAL  ********************************************************************
 def disableHeader(ind): #refactored
 	ind.header = False
@@ -1570,3 +1628,63 @@ def US19():
 print("US19 --> Last name verification of females:")
 ###### code for User Story 19 ends here ######
 US19()
+
+
+def US11():
+    count = 0
+
+    for i in Families:
+        i.border = False
+        i.header = False
+        husband = i.get_string(fields=["Husband Name"]).strip().replace('/','')
+        wife = i.get_string(fields=["Wife Name"]).strip().replace('/','')
+        iD = i.get_string(fields=["ID"]).strip().replace('/','')
+        for j in Families:
+            j.border = False
+            j.header = False
+            pCheckH = j.get_string(fields=["Husband Name"]).strip()
+            pCheckW = j.get_string(fields=["Wife Name"]).strip()
+            pCheckId = j.get_string(fields=["ID"]).strip()
+            divorce_status = j.get_string(fields=['Divorced']).strip()
+            if pCheckId == iD:
+                continue
+            if (pCheckH == husband and wife == pCheckW):
+                if (divorce_status != 'NA'):
+                    count+=1
+                    print(pCheckId,": is a marriage that violates the polygamy law")
+                    break
+    
+    if count == 0:
+        print('None Found')
+
+print('US11 --> Listing all polygamous marriage:')
+##### code for User Story 11 ends here #####
+US11()
+
+# ##########CODE FOR USER STORY 12##############
+def US12():
+    cases = []
+    flagged = []
+    ageDiff = 0
+
+    for i in Individuals:
+        i.border, i.header = False, False
+        if((i.get_string(fields = ["ID"]).strip()) != "NA"):
+            id = (i.get_string(fields=['ID']).strip().replace('/', ''))
+            if (i.get_string(fields=['Birthday']).strip() != 'NA'): 
+                birthday = datetime.strptime((i.get_string(fields=['Birthday']).strip()), '%d %b %Y')
+                if (i.get_string(fields=['Death']).strip() != 'NA'): 
+                    parent = datetime.strptime((i.get_string(fields=['Death']).strip()), '%d %b %Y')
+                    ageDiff = datetime.date(parent).year - datetime.date(birthday).year
+            if(ageDiff < 0 or ageDiff > 80):
+                flagged.append(id)
+
+    if(len(flagged) != 0):
+        cases = ', '.join(flagged)
+        print('US12 --> Individual(s) were flagged:' + cases)
+    else:
+        print('US12 --> No cases found.')
+
+###### code for User Story 12 ends here ######
+print("US12 --> Age verification of offspring:")
+US12()

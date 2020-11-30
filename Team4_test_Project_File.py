@@ -21,6 +21,16 @@ class US09_test(unittest.TestCase):
         """Testing Equal"""
         self.assertEqual(Team4_Project_File.US09(), 'No Error found')
 
+class US23_test(unittest.TestCase):
+
+    def test_US23(self):
+        self.assertEqual(Team4_Project_File.US23(), ['US23 - Error : Individual I1 and I16 Might be the same'])
+
+class US40_test(unittest.TestCase):
+
+    def test_US40(self):
+        self.assertEqual(Team4_Project_File.US40(), ["US40 - Individual ['I13', 'I2', 'I3', 'I4', 'I5', 'I6', 'I7'] has no children"])
+        
 class US14_test(unittest.TestCase):
 
     def test_equal(self):
