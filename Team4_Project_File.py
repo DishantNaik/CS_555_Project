@@ -1376,6 +1376,8 @@ def US48(Individuals):
 	print(marriedFemale(Individuals))
 US48(Individuals)
 
+#************************************************** USER STORY - 47 **********************************************************************
+
 def US47():
     print('US47 - Children with Single parent')
     singleParentChild = createIndividualsPrettyTable()
@@ -1411,7 +1413,7 @@ def checkSiblings(sibID, spouse_ID):
                 return flag
     return flag
 
-
+#************************************************** USER STORY - 20 **********************************************************************
 
 def US20() :
     print('US20 - Aunts and Uncles')
@@ -1449,6 +1451,8 @@ def US20() :
         print("No one in the family have avunculate marriage")
 US20()
 
+#************************************************** USER STORY - 24 **********************************************************************
+
 def US24() :
     print('US24 - Unique families by spouses')
     for ab in Families:
@@ -1475,6 +1479,8 @@ def US24() :
     if(flag):
         print("All the families in the GEDCOM file are unique")
 US24()
+
+#************************************************** USER STORY - 26 **********************************************************************
 
 def US26():
     print('US26 - Corresponding entries')
@@ -1539,6 +1545,8 @@ def US26():
         print(entriesFamilies)
 US26()
 
+#************************************************** USER STORY - 37 **********************************************************************
+
 def US37():
     result = set()
     indi = []
@@ -1582,8 +1590,57 @@ def US37():
 
 print("US37 - ", US37())
 
+#************************************************** USER STORY - 41 **********************************************************************
 
+def US41():
+    for i in Individuals:
+        i.border,i.header = False,False
+        flag = 0
+        if(i.get_string(fields = ["Birthday"]).strip() != 'NA'):
+            temp = (datetime.strptime((i.get_string(fields = ["Birthday"]).strip()), '%d %b %Y'))
+            temp_month = temp.month
+            temp_day = temp.day
+            temp_year = temp.year
+            if(temp_year == 0000):
+                print(i.get_string(fields = ["ID"]).strip(), " has no year in the Birthdate")
+            if(temp_day == 00 or temp_month == 00):
+                flag = 1
+        if(i.get_string(fields = ["Death"]).strip() != 'NA'):
+            temp1 = (datetime.strptime((i.get_string(fields = ["Death"]).strip()), '%d %b %Y'))
+            temp_month1 = temp1.month
+            temp_day1 = temp1.day
+            temp_year1 = temp1.year
+            if(temp_year1 == 0000):
+                print(i.get_string(fields = ["ID"]).strip(), " has no year in the Death date")
+            if(temp_day1 == 00 or temp_month1 == 00):
+                flag = 1
+    
+    for f in Families:
+        f.border,f.header = False,False
+        if(f.get_string(fields = ["Married"]).strip() != 'NA'):
+            temp = (datetime.strptime((f.get_string(fields = ["Married"]).strip()), '%d %b %Y'))
+            temp_month = temp.month
+            temp_day = temp.day
+            temp_year = temp.year
+            if(temp_year == 0000):
+                print(f.get_string(fields = ["ID"]).strip(), " has no year in the Marriage date")
+            if(temp_day == 00 or temp_month == 00):
+                flag = 1
+        if(f.get_string(fields = ["Divorced"]).strip() != 'NA'):
+            temp1 = (datetime.strptime((f.get_string(fields = ["Divorced"]).strip()), '%d %b %Y'))
+            temp_month1 = temp1.month
+            temp_day1 = temp1.day
+            temp_year1 = temp1.year
+            if(temp_year1 == 0000):
+                print(f.get_string(fields = ["ID"]).strip(), " has no year in the Divorce date")
+            if(temp_day1 == 00 or temp_month1 == 00):
+                flag = 1
+    if(flag == 1):
+        return "Partial dates without days and months are Included"
+    else :
+        return "All dates in the GEDCOM file are complete "
 
+print("US41 - ", US41())
 
 
 #*********************************************** Pradeep Kumar END ************************************************************************************
