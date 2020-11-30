@@ -25,6 +25,15 @@ class US23_test(unittest.TestCase):
 
     def test_US23(self):
         self.assertEqual(Team4_Project_File.US23(), ['US23 - Error : Individual I1 and I16 Might be the same'])
+class US07_test(unittest.TestCase):
+
+    def test_US07(self):
+        self.assertEqual(Team4_Project_File.US07(),'US07 - Error : Individual - I8 have age more than 150 years old')
+
+class US25_test(unittest.TestCase):
+
+    def test_US25(self):
+        self.assertEqual(Team4_Project_File.US25(), ['US25 - Error : Family F4 have children with same name and dob'])
 
 class US40_test(unittest.TestCase):
 
