@@ -39,7 +39,7 @@ class US40_test(unittest.TestCase):
 
     def test_US40(self):
         self.assertEqual(Team4_Project_File.US40(), ["US40 - Individual ['I13', 'I2', 'I3', 'I4', 'I5', 'I6', 'I7'] has no children"])
-        
+
 class US14_test(unittest.TestCase):
 
     def test_equal(self):
@@ -73,7 +73,7 @@ class US10_test(unittest.TestCase):
 class US27_test(unittest.TestCase):
 
     def test_27(self):
-        self.assertEqual(Team4_Project_File.US27(), 'US27 - Error : Individual I24 has no ages displayed')
+        self.assertEqual(Team4_Project_File.US27(), 'US27 - Error : Individual I14 I24 has no ages displayed')
 
 class US16_test(unittest.TestCase):
 
@@ -94,7 +94,7 @@ class US15_test(unittest.TestCase):
 class US34_test(unittest.TestCase):
 
     def test_34(self):
-        self.assertEqual(Team4_Project_File.US34(), ["US34 - Family ['F2', 'F3', 'F4', 'F5', 'F6'] has a large age difference"])    
+        self.assertEqual(Team4_Project_File.US34(), ["US34 - Family ['F2', 'F3', 'F4', 'F5', 'F6'] has a large age difference"])
 
 class US04_test(unittest.TestCase):
 
@@ -486,6 +486,21 @@ class US33_test(unittest.TestCase):
             oIndiv.border,oIndiv.header = False,False
             self.assertIsInstance(oIndiv,PrettyTable)
 
+class US28_test(unittest.TestCase):
+    def setUp(self):
+        self.individuals = PrettyTable()
+        self.individuals.field_names = ["ID", "Name", "Gender", "Birthday","Age","Alive","Death","Child","Spouse"]
+        self.individuals.add_row(["ind1","Tia /Meyer/",  "F", "14 Jan 1985",35,"True", "NA","{'fam1'}", "NA" ])
+        self.individuals.add_row(["ind2","Scott /Meyer/",  "M", "14 Feb 1990",31,"False", "NA","{'fam1'}", "NA" ])
+        self.individuals.add_row(["ind3","Natalie /Meyer/",  "F", "14 Oct 1980",41,"False", "NA","{'fam1'}", "NA" ])
+
+    def test_US28_returnedIndividualsLengthIsSame(self):
+        orderSiblingsByDecAgeInFamily = Team4_Project_File.orderSiblingsByDecAgeInFamily(self.individuals)
+        self.assertEqual(643, len(orderSiblingsByDecAgeInFamily))
+
+    def test_US28_returnIndividualsInstanceType(self):
+        orderSiblingsByDecAgeInFamily = Team4_Project_File.orderSiblingsByDecAgeInFamily(self.individuals)
+        self.assertIsInstance(orderSiblingsByDecAgeInFamily,str)
 
 class US43_test(unittest.TestCase):
     def test(self):
@@ -553,7 +568,7 @@ class Test_File(unittest.TestCase):
 
     def test_US03(self):
         self.assertEqual(Team4_Project_File.US03(),'US03 - Error : Individual - I5 have death before birthday')
-    
+
     def test_US06(self):
         self.assertEqual(Team4_Project_File.US06(),'US06 - Error : Individual - I3 I5 have death before divorce')
 

@@ -7,6 +7,7 @@ from datetime import datetime,date,timedelta
 import collections
 import copy
 import re
+import operator
 
 Individuals= PrettyTable()
 Families= PrettyTable()
@@ -90,7 +91,7 @@ for i in ndetails.split("INDI"):
 
 # Retriving the individual details for the table
 for x in range(1 , len(vdetails)):
-    col=['NA','NA','NA','NA','NA',True,'NA','NA','NA']
+    col=['NA','NA','NA','NA',-1,True,'NA','NA','NA']
     data = vdetails[x].split("\n")
     a =set()
     b = set()
@@ -110,17 +111,17 @@ for x in range(1 , len(vdetails)):
             col[3]=(data[j+1].split("|")[-1])
             today=date.today()
             born = datetime.strptime((data[j+1].split("|")[-1]), '%d %b %Y')
-            col[4]=(today.year - born.year - ( (born.month, born.day)> (today.month, today.day) ))
+            col[4]=int(today.year - born.year - ( (born.month, born.day)> (today.month, today.day) ))
         #Getting the Death details and putting it into the coulm 5
         elif len(data[j].split("|")) >1 and data[j].split("|")[1]=='DEAT':
             col[5]=False
             col[6]=(data[j+1].split("|")[-1])
             death=datetime.strptime((data[j+1].split("|")[-1]), '%d %b %Y')
-            col[4]=(death.year - born.year - ((born.month, born.day) > (death.month, death.day) ))
+            col[4]=int(death.year - born.year - ((born.month, born.day) > (death.month, death.day) ))
         #Getting the Family table and populating the child and spouse.
         elif len(data[j].split("|")) >1 and data[j].split("|")[1]=='FAMC':
             a.add((data[j].split("|")[-1]).replace('@',''))
-            col[7]=a
+            col[7]=str(a)
         elif len(data[j].split("|")) >1 and data[j].split("|")[1]=='FAMS':
             b.add((data[j].split("|")[-1]).replace('@',''))
             col[8]=b
@@ -332,7 +333,7 @@ def US14():
         tmp = i.get_string(fields = ["Children"]).strip()
 
         tmp = tmp.split(',')
-    
+
         for j in tmp:
             result = re.sub('[\W_]+', '',j)
             siblings.append(result)
@@ -369,7 +370,7 @@ print('US14 - ',US14())
 ####################################### Story 09 ###########################################
 # Birth before death of parents
 def get_childs(fam_id):
-    
+
     for j in Families:
         j.border = False
         j.header = False
@@ -395,13 +396,13 @@ def get_childs(fam_id):
                             tt = datetime.strptime((k.get_string(fields = ["Birthday"]).strip()), '%d %b %Y')
                             tt = tt.now().date()
                             birth_dates.append(tt)
-            
+
             return(birth_dates)
 
 
 
 def US09():
-    
+
     for i in Families:
         i.border = False
         i.header = False
@@ -415,14 +416,14 @@ def US09():
         for m in Individuals:
             m.border = False
             m.header = False
-            
+
             if(m.get_string(fields = ["ID"]).strip() == parent_id1):
                 if(m.get_string(fields = ["Death"]).strip() != "NA"):
                     hus_deth = datetime.strptime((m.get_string(fields = ["Death"]).strip()), '%d %b %Y')
                     hus_deth = hus_deth.now().date()
                 else: hus_deth = 'NA'
                 # print(type(hus_deth))
-            
+
             if(m.get_string(fields = ["ID"]).strip() == parent_id2):
                 if(m.get_string(fields = ["Death"]).strip() != "NA"):
                     wif_deth = datetime.strptime((m.get_string(fields = ["Death"]).strip()), '%d %b %Y')
@@ -433,7 +434,7 @@ def US09():
             # tmp = get_childs(fam_id)
             # print(tmp)
             # print('------------')
-            
+
             flag = list()
 
             # if(type(hus_deth) is datetime.date):
@@ -445,7 +446,7 @@ def US09():
             #         if(diff_with_dad > 0):
             #             flag.append(True)
             #         else: flag.append(False)
-            
+
             # if(type(wif_deth) is datetime.date):
             #     tmp = get_childs(fam_id)
 
@@ -461,50 +462,50 @@ def US09():
                 tmp = get_childs(fam_id)
 
                 for x in tmp:
- 
+
                     diff_with_dad =  abs((hus_deth - x).days)
                     diff_with_mom =  abs((wif_deth - x).days)
 
                     if(diff_with_dad > 0 and diff_with_mom > 0):
                         flag.append(True)
                     else: flag.append(False)
-            
+
             elif(type(hus_deth) is datetime.date and type(wif_deth) is not datetime.date):
                 tmp = get_childs(fam_id)
-    
+
                 for x in tmp:
                     diff_with_dad =  abs((hus_deth - x).days)
 
                     if(diff_with_dad > 0):
                         flag.append(True)
                     else: flag.append(False)
-            
+
             elif(type(hus_deth) is not datetime.date and type(wif_deth) is datetime.date):
                 tmp = get_childs(fam_id)
 
                 for x in tmp:
-                    
+
                     diff_with_mom =  abs((wif_deth - x).days)
 
                     if(diff_with_mom > 0):
                         flag.append(True)
                     else: flag.append(False)
-            
+
             else: flag.append(True)
 
             for q in flag:
                 if(q == False):
                     return('Error Found')
-            
+
             return('No Error found')
-        
+
 print('US09 - ',US09())
 
 ####################################### Story 08 ###########################################
 # Birth after marriage of parents
 
 def US08():
-    
+
     for i in Families:
         i.border = False
         i.header = False
@@ -524,11 +525,11 @@ def US08():
 
                     if(abs((parant_mrg - tmp1).days) <= 0):
                         return('Error found at ', k)
-    
+
     return('No error found')
 
-        
-        
+
+
 print('US08 - ',US08())
 
 ####################################### Story 42 ###########################################
@@ -540,7 +541,7 @@ def US42():
     for i in Individuals:
         i.border = False
         i.header = False
-        
+
         if(i.get_string(fields = ["Birthday"]).strip() != 'NA'):
             tmp = (datetime.strptime((i.get_string(fields = ["Birthday"]).strip()), '%d %b %Y'))
             tmp_mon = tmp.month
@@ -559,7 +560,7 @@ def US42():
                     continue
                 else: error.append(tmp)
 
-        
+
         if(i.get_string(fields = ["Death"]).strip() != 'NA'):
             tmp2 = (datetime.strptime((i.get_string(fields = ["Death"]).strip()), '%d %b %Y'))
             tmp1_mon = tmp2.month
@@ -577,7 +578,7 @@ def US42():
                 if(tmp1_day >= 1 and tmp1_day <= 29):
                     continue
                 else: error.append(tmp)
-    
+
     for j in Families:
         j.border = False
         j.header = False
@@ -617,11 +618,11 @@ def US42():
                 if(tmp1_day >= 1 and tmp1_day <= 29):
                     continue
                 else: error.append(tmp)
-    
+
     if(len(error) != 0):
         return('ERROR -',error)
     else: return('NO ERROR found')
-            
+
 print('US42 - ',US42())
 #************************************************** DHRUV_PATEL **********************************************************************
 #************************************************** USER STORY - 05 **********************************************************************
@@ -745,12 +746,12 @@ def US27():
     for row in Individuals:
         row.border = False
         row.header = False
-        
+
         id = getID(row)
-        
-        if(row.get_string(fields=["Age"]).strip() == 'NA'):
+
+        if(int(row.get_string(fields=["Age"]).strip()) == -1):
             error.append(id)
-    
+
     error=sorted(error)
     if error:
         str = " ".join(error)
@@ -771,10 +772,10 @@ def US15():
 
         fam = []
         id = getID(row)
-        
+
         tmp = row.get_string(fields=["Children"]).strip().replace('/','')
         tmp = tmp.split(',')
-        
+
         for i in tmp:
             res = re.sub('[\W_]+', '',i)
             fam.append(res)
@@ -783,7 +784,7 @@ def US15():
         for k,v in family.items():
             if len(v) > 15:
                 error.add(f"US15 - Family {k} has more than 15 sibiling")
-            
+
     if error:
         return list(error)
     else:
@@ -805,7 +806,7 @@ def US34():
         wifeid = (row.get_string(fields = ["Wife ID"])).strip()
 
         h_age, w_age = 0, 0
-       
+
         for y in Individuals:
             y.header = False
             y.border = False
@@ -813,19 +814,19 @@ def US34():
                 h_age = int(y.get_string(fields = ["Age"]).strip())
             if getID(y) == wifeid:
                 w_age = int(y.get_string(fields = ["Age"]).strip())
-            
+
             older = max(h_age, w_age)
             young = min(h_age, w_age)
 
             if young >= (older/2):
                 lrg_age.add(id)
-    
+
     error.append(f'US34 - Family {sorted(lrg_age)} has a large age difference')
     if error:
         return error
     else:
         return 'No couples with large age difference'
-                    
+
 print('US34 - ',US34())
 
 #************************************************** USER STORY - 23 **********************************************************************
@@ -851,12 +852,12 @@ def US23():
                     error.append(f"US23 - Error : Individual {id[i]} and {id[j]} Might be the same")
                 else:
                     error.append(f"US23 - Error : Individual {id[i]} and {id[j]} Might be the same")
-                    
+
 
             elif(names[i]!=names[j]):
                 if(dob[i]==dob[j]):
                     error.append(f"US23 - Error : Individual {id[i]} and {id[j]} Might be the same")
-                    
+
 
     if len(error)!=0:
         return (error)
@@ -876,7 +877,7 @@ def US40():
         ind_id = getID(rw)
         if(rw.get_string(fields=["Child"]).strip() == 'NA'):
             no_children.add(ind_id)
-    
+
     error.append(f'US40 - Individual {sorted(no_children)} has no children')
 
     if (len(no_children) != 0):
@@ -942,7 +943,7 @@ def getWifeId(fam):  #refactored
 
 def getAge(ind):  #refactored
 	age = ind.get_string(fields = ["Age"]).strip()
-	if age != 'NA':
+	if age != -1:
 		return int(age)
 	else:
 		return -1
@@ -1071,6 +1072,10 @@ def findUpcomingBirthdaysInNextNDays(Individuals, days):
 def findOrphansYoungerThan(Individuals, childAge):
 	return filterIndividuals(Individuals, 'ORPHANS_YOUNGERTHANXAGE', childAge)
 
+def orderSiblingsByDecAgeInFamily(Individuals):
+	Individuals = Individuals.get_string(sort_key=operator.itemgetter(8,5), sortby="Age", reversesort = True)
+	return Individuals
+
 def US29(Individuals):
 	print('US29 - Deceased Individuals')
 	print(findDeceasedIndividuals(Individuals))
@@ -1108,6 +1113,10 @@ def US33(Individuals, Families, childAge):
 	print(findOrphansYoungerThan(Individuals, childAge))
 US33(Individuals, Families, 18)
 
+def US28(Individuals):
+	print('US28 - Order siblings in families by decreasing age, i.e. oldest siblings first')
+	print(orderSiblingsByDecAgeInFamily(Individuals))
+US28(Individuals)
 #************************************************** END - DEEPTIDEVI AGRAWAL  **********************************************************************
 
 #************************************************** START- ANURAG AMAN *****************************************************************************
@@ -1122,7 +1131,7 @@ def US07():
             age = int((row3.get_string(fields = ["Age"]).strip()))
             if(age >= 150):
                 errors.append(id)
-            
+
     if(len(errors) != 0):
         strerror=" ".join(errors)
         return f'US07 - Error : Individual - {strerror} have age more than 150 years old'
@@ -1159,8 +1168,8 @@ def US25():
                 for l in range(k+1,len(child)):
                     if(child[k]==child[l]):
                         if(dob[k]==dob[l]):
-                            errors.append(f"US25 - Error : Family {i} have children with same name and dob")                         
-                 
+                            errors.append(f"US25 - Error : Family {i} have children with same name and dob")
+
     if(len(errors)==0):
         return ("US25 - No error detected.")
     else:
@@ -1320,7 +1329,7 @@ def US06():
                         death = (datetime.strptime((x.get_string(fields = ["Death"]).strip()), '%d %b %Y'))
                         if(datetime.date(divorce) > datetime.date(death)):
                             errors.append(id)
-    
+
     if(len(errors) != 0):
         strerror=" ".join(errors)
         return f'US06 - Error : Individual - {strerror} have death before divorce'
@@ -1440,7 +1449,7 @@ def US20() :
         print("No one in the family have avunculate marriage")
 US20()
 
-def US24() : 
+def US24() :
     print('US24 - Unique families by spouses')
     for ab in Families:
         flag = True
@@ -1457,7 +1466,7 @@ def US24() :
             mar_date_test = h.get_string(fields=['Married']).strip()
             if(fam_id == fam_id_test):
                 continue
-            if(hus_test == hus and wife == wife_test and mar_date == mar_date_test) : 
+            if(hus_test == hus and wife == wife_test and mar_date == mar_date_test) :
                 flag = False
                 print("Family : ", fam_id, " and ", fam_id_test, " are having same spouses by name and marriage date ")
                 break
@@ -1518,11 +1527,11 @@ def US26():
                     flag = False
                     count = False
                     entriesFamilies.add_row(getIndividualRow(ind))
-            if fam_wifeID == ind_ID : 
+            if fam_wifeID == ind_ID :
                 if fam_ID not in ind_spouse :
                     flag = False
                     count = False
-                    entriesFamilies.add_row(getIndividualRow(ind))         
+                    entriesFamilies.add_row(getIndividualRow(ind))
     if(count):
         print("All Individual roles specified in Family record have their corresponding entries in the corresponding individual records")
     else:
@@ -1558,7 +1567,7 @@ def US37():
                             for b in bad_chars :
                                 childrn = childrn.replace(b, '')
                                 temp = childrn.split(", ")
-                            for t in temp : 
+                            for t in temp :
                                 indi.append(t)
                             break
     for i in Individuals:
@@ -1571,10 +1580,10 @@ def US37():
         return "No one in the GEDCOM file died in the last 30days"
     return result
 
-print("US37 - ", US37())                         
+print("US37 - ", US37())
 
 
-  
+
 
 
 #*********************************************** Pradeep Kumar END ************************************************************************************
@@ -1749,9 +1758,9 @@ def US11():
             if (pCheckH == husband and wife == pCheckW):
                 if (divorce_status != 'NA'):
                     count+=1
-                    print(pCheckId,": is a marriage that violates the polygamy law")
+                    print(pCheckId,": is a marriage that violates the polygamy law")
                     break
-    
+
     if count == 0:
         print('None Found')
 
@@ -1759,7 +1768,7 @@ print('US11 --> Listing all polygamous marriage:')
 ##### code for User Story 11 ends here #####
 US11()
 
-# ##########CODE FOR USER STORY 12##############
+# ##########CODE FOR USER STORY 12##############
 def US12():
     cases = []
     flagged = []
@@ -1769,9 +1778,9 @@ def US12():
         i.border, i.header = False, False
         if((i.get_string(fields = ["ID"]).strip()) != "NA"):
             id = (i.get_string(fields=['ID']).strip().replace('/', ''))
-            if (i.get_string(fields=['Birthday']).strip() != 'NA'): 
+            if (i.get_string(fields=['Birthday']).strip() != 'NA'):
                 birthday = datetime.strptime((i.get_string(fields=['Birthday']).strip()), '%d %b %Y')
-                if (i.get_string(fields=['Death']).strip() != 'NA'): 
+                if (i.get_string(fields=['Death']).strip() != 'NA'):
                     parent = datetime.strptime((i.get_string(fields=['Death']).strip()), '%d %b %Y')
                     ageDiff = datetime.date(parent).year - datetime.date(birthday).year
             if(ageDiff < 0 or ageDiff > 80):
@@ -1783,6 +1792,6 @@ def US12():
     else:
         print('US12 --> No cases found.')
 
-###### code for User Story 12 ends here ######
-print("US12 --> Age verification of offspring:")
+###### code for User Story 12 ends here ######
+print("US12 --> Age verification of offspring:")
 US12()
