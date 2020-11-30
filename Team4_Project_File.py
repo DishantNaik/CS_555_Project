@@ -1112,6 +1112,59 @@ US33(Individuals, Families, 18)
 
 #************************************************** START- ANURAG AMAN *****************************************************************************
 
+#************************************************** USER STORY-07 **********************************************************************************
+def US07():
+    errors=[]
+    for row3 in Individuals:
+        row3.border , row3.header = False , False
+        id = (row3.get_string(fields = ["ID"]).strip().replace('/',''))
+        if((row3.get_string(fields = ["Age"]).strip()) != 'NA'):
+            age = int((row3.get_string(fields = ["Age"]).strip()))
+            if(age >= 150):
+                errors.append(id)
+            
+    if(len(errors) != 0):
+        strerror=" ".join(errors)
+        return f'US07 - Error : Individual - {strerror} have age more than 150 years old'
+    else:
+        return "US07 - No errors found "
+#******************************************************USER STORY 25 *********************************************************************************
+
+def US25():
+    family={}
+    errors=[]
+    for row in Families:
+        row.border , row.header = False , False
+        fam=[]
+        id=(row.get_string(fields=["ID"]).strip().replace('/',''))
+        fam.append(row.get_string(fields=["Children"]).strip().replace('/',''))
+        family[id]=fam
+
+    for i in family:
+        childern= family[i][0]
+        patterns= r'\w+'
+        if childern != 'NA':
+            match= re.findall(patterns, childern)
+            child=[]
+            dob=[]
+            if (match[0]!='NA'):
+                for j in range(0,len(match)):
+                    for row in Individuals:
+                        row.border ,row.header = False , False
+                        if (row.get_string(fields=["ID"]).strip()) == match[j]:
+                            if((row.get_string(fields=["Birthday"]).strip())!='NA'):
+                                child.append(row.get_string(fields=["Name"]).strip().replace('/','').split(" ")[0].lower())
+                                dob.append(datetime.strptime((row.get_string(fields=["Birthday"]).strip()), '%d %b %Y'))
+            for k in range(0,len(child)):
+                for l in range(k+1,len(child)):
+                    if(child[k]==child[l]):
+                        if(dob[k]==dob[l]):
+                            errors.append(f"US25 - Error : Family {i} have children with same name and dob")                         
+                 
+    if(len(errors)==0):
+        return ("US25 - No error detected.")
+    else:
+        return (sorted(errors))
 #########################################################USER STORY - 02###############################################################################
 def US02():
     errors=[]
