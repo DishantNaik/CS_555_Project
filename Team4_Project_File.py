@@ -1795,3 +1795,23 @@ def US12():
 ###### code for User Story 12 ends here ######
 print("US12 --> Age verification of offspring:")
 US12()
+
+##########CODE FOR USER STORY 45##############
+def US45():
+    flag = False
+
+    for i in Families:
+        i.border = False
+        i.header = False
+        wife_name = i.get_string(fields=["Wife Name"]).strip()
+        index = wife_name.index('/')
+        maiden_name = wife_name[index:]
+        print(maiden_name)
+        flag = True
+
+    if(flag == False):
+        print("No maiden names found")
+
+###### code for User Story 45 ends here ######
+print("US45 --> Maiden names of married females:")
+US45()

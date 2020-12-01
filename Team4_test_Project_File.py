@@ -600,7 +600,9 @@ class US26(unittest.TestCase):
         """Testing User Story 26"""
         self.assertIsNot(Team4_Project_File.US26(), 'US26 - Error : Individual - I29 I30 does not have corresponding entries')
 
-
+class US45_testIsNot(unittest.TestCase):
+    def test(self):
+        self.assertIsNot(Team4_Project_File.US45(),"No maiden names found")
 
 
 #all test methods above this line
